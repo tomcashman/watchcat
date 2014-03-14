@@ -1,0 +1,57 @@
+import org.gradle.api.tasks.Exec
+import org.apache.tools.ant.taskdefs.condition.Os
+import org.apache.tools.ant.filters.*
+
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-snapshot" }
+        mavenLocal()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC4")
+    }
+}
+
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'eclipse-wtp'
+	apply plugin: 'maven'
+
+	version = "1.0.0-SNAPSHOT"
+	group = "com.linuxgraph"
+	
+	uploadArchives {
+		repositories {
+			mavenDeployer {
+				repository(url: "")
+			}
+		}
+	}
+	
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven { url "http://repo.spring.io/libs-snapshot" }
+	}
+}
+
+project(":" + rootProject.name + "-collector") {
+	apply plugin: 'spring-boot'
+
+	dependencies {
+		compile 'org.springframework.boot:spring-boot-starter:1.0.0.RC4'
+		compile 'org.elasticsearch:elasticsearch:1.0.1'
+		
+		testCompile 'junit:junit:4.11'
+        testCompile 'org.jmock:jmock-legacy:2.6.0'
+        testCompile 'org.jmock:jmock-junit4:2.6.0'
+	}
+	
+	jar {
+    	baseName = 'linux-graph-collector'
+	}
+}
+
+project(":" + rootProject.name + "-web") {
+
+}

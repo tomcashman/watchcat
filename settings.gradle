@@ -1,0 +1,3 @@
+include 'collector', 'web'
+rootProject.name = 'linux-graph'
+rootProject.children.each { it.name = rootProject.name + "-" + it.name }

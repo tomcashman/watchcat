@@ -1,0 +1,10 @@
+node_modules
+dist
+.tmp
+.sass-cache
+web/app/bower_components
+/build
+.gradle/
+.settings
+.project
+.classpath
