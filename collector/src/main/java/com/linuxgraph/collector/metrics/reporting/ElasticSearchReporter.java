@@ -53,7 +53,7 @@ import com.linuxgraph.collector.util.ShellCommand;
 @Component
 public class ElasticSearchReporter implements Runnable {
 	private static String LINUX_GRAPH_INDEX = "linux-graph";
-	private static String LINUX_GRAPH_TYPE = "node";
+	private static String LINUX_GRAPH_TYPE = "host";
 
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
