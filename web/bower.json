@@ -12,14 +12,19 @@
     "angular-sanitize": "1.2.6",
     "angular-route": "1.2.6",
     "angular-bootstrap": "0.10.0",
-    "angular-charts": "0.0.1",
-    "font-awesome": "~4.0.3"
+    "font-awesome": "~4.0.3",
+    "momentjs": "~2.5.1",
+    "nvd3": "~1.1.15-beta",
+    "angularjs-nvd3-directives": "~0.0.5-beta"
   },
   "devDependencies": {
     "angular-mocks": "1.2.6",
     "angular-scenario": "1.2.6"
   },
   "resolutions": {
-    "jquery": "~2.0.3"
+    "jquery": "~2.0.3",
+    "angular": "1.2.6",
+    "nvd3": "~1.1.15-beta",
+    "d3": "~3.3.13"
   }
 }

@@ -13,6 +13,10 @@ angular.module('linuxGraphApp').controller('HeaderCtrl', function($scope, $route
 			result.push(response.hits.hits[i]._id);
 		}
 		$scope.hosts = result;
+		
+		if($scope.currentHost === "") {
+			$scope.currentHost = $scope.hosts[0];
+		}
 	}, function(error) {
 		
 	});
