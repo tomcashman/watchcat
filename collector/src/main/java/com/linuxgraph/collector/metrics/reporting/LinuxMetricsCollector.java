@@ -23,9 +23,16 @@
  */
 package com.linuxgraph.collector.metrics.reporting;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.linuxgraph.collector.metrics.DiskUsage;
+import com.linuxgraph.collector.metrics.LoadAverage;
 import com.linuxgraph.collector.metrics.MemoryUsage;
 
 /**
@@ -36,9 +43,31 @@ import com.linuxgraph.collector.metrics.MemoryUsage;
 @Component
 public class LinuxMetricsCollector {
 	@Autowired
+	private ScheduledExecutorService scheduledExecutorService;
+	
+	@Autowired
 	private MemoryUsage memoryUsage;
+	@Autowired
+	private LoadAverage loadAverage;
+	@Autowired
+	private DiskUsage diskUsage;
+	
+	@PostConstruct
+	public void postConstruct() {
+		scheduledExecutorService.scheduleAtFixedRate(loadAverage, 1000, 1000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(memoryUsage, 1000, 1000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(diskUsage, 1000, 1000, TimeUnit.MILLISECONDS);
+	}
 
 	public MemoryUsage getMemoryUsage() {
 		return memoryUsage;
+	}
+
+	public LoadAverage getLoadAverage() {
+		return loadAverage;
+	}
+
+	public DiskUsage getDiskUsage() {
+		return diskUsage;
 	}
 }

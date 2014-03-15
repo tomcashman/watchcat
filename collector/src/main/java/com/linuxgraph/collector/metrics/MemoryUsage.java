@@ -25,7 +25,8 @@ package com.linuxgraph.collector.metrics;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.springframework.scheduling.annotation.Scheduled;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
 import com.linuxgraph.collector.util.ShellCommand;
@@ -36,7 +37,7 @@ import com.linuxgraph.collector.util.ShellCommand;
  * @author Thomas Cashman
  */
 @Component
-public class MemoryUsage {
+public class MemoryUsage implements Runnable {
 	private ShellCommand command;
 	private AtomicInteger totalMemory;
 	private AtomicInteger totalSwap;
@@ -52,7 +53,7 @@ public class MemoryUsage {
 		usedSwap = new AtomicInteger();
 	}
 	
-	@Scheduled(fixedRate = 1000)
+	@Override
 	public void run() {
 		String result = command.execute();
 		
@@ -82,5 +83,29 @@ public class MemoryUsage {
 	
 	public int getUsedSwap() {
 		return usedSwap.get();
+	}
+	
+	public XContentBuilder toJson(String timestamp) {
+		try {
+			XContentBuilder builder = XContentFactory.jsonBuilder();
+			builder = builder.startObject();
+			builder = builder.field("timestamp", timestamp);
+			builder = builder.field("totalMemory", getTotalMemory());
+			builder = builder.field("totalSwap", getTotalSwap());
+			builder = builder.field("usedMemory", getUsedMemory());
+			builder = builder.field("usedSwap", getUsedSwap());
+			builder = builder.endObject();
+			return builder;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "MemoryUsage [totalMemory=" + totalMemory.get() + "mb, totalSwap="
+				+ totalSwap.get() + "mb, usedMemory=" + usedMemory.get() + "mb, usedSwap="
+				+ usedSwap.get() + "mb]";
 	}
 }
