@@ -21,30 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.custodian.metrics.domain;
+package com.viridiansoftware.custodian.collector.util;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
- * A single row of connection data outputted from netstat
- *
+ * Provides execution and output retrieval of shell commands
+ * 
  * @author Thomas Cashman
  */
-public class ConnectionsData {
-	private int total;
-	private String address;
-	
-	public int getTotal() {
-		return total;
+public class ShellCommand {
+	private String [] command;
+
+	/**
+	 * Constructor
+	 * @param command The shell command to execute
+	 */
+	public ShellCommand(String command) {
+		this.command = new String [] { "/bin/sh", "-c", command };
 	}
-	
-	public void setTotal(int total) {
-		this.total = total;
-	}
-	
-	public String getAddress() {
-		return address;
-	}
-	
-	public void setAddress(String address) {
-		this.address = address;
+
+	/**
+	 * Executes the shell command and returns its output
+	 * @return An empty string on error
+	 */
+	public String execute() {
+		StringBuffer output = new StringBuffer();
+
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(command);
+			p.waitFor();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					p.getInputStream()));
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return output.toString();
 	}
 }

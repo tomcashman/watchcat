@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.custodian;
+package com.viridiansoftware.custodian.collector;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.custodian.metrics.reporting;
+package com.viridiansoftware.custodian.collector.metrics.reporting;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,12 +31,12 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.viridiansoftware.custodian.metrics.Bandwidth;
-import com.viridiansoftware.custodian.metrics.DiskUsage;
-import com.viridiansoftware.custodian.metrics.LoadAverage;
-import com.viridiansoftware.custodian.metrics.MemoryUsage;
-import com.viridiansoftware.custodian.metrics.NetworkConnections;
-import com.viridiansoftware.custodian.metrics.Processes;
+import com.viridiansoftware.custodian.collector.metrics.Bandwidth;
+import com.viridiansoftware.custodian.collector.metrics.DiskUsage;
+import com.viridiansoftware.custodian.collector.metrics.LoadAverage;
+import com.viridiansoftware.custodian.collector.metrics.MemoryUsage;
+import com.viridiansoftware.custodian.collector.metrics.NetworkConnections;
+import com.viridiansoftware.custodian.collector.metrics.Processes;
 
 /**
  * Gathers metrics of the Linux system every second

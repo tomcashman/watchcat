@@ -50,6 +50,30 @@ project(":" + rootProject.name + "-collector") {
 	jar {
     	baseName = 'custodian-collector'
 	}
+	
+	task createDeb(type: Exec) {
+		group = "Build"
+		description = "Builds the debian package file"
+		commandLine = [
+			"fpm",
+			"-s","dir",
+			"-t","deb",
+			"--name","custodian-collector",
+			"--description","Custodian Metrics Collector",
+			"--depends","oracle-java7-installer",
+			"--vendor","Viridian Software",
+			"--maintainer","Support Staff<support@viridiansoftware.com>",
+			"--version",version,
+			"--url","custodian.viridiansoftware.com",
+			"--prefix","usr/share/viridiansoftware/install/custodian",
+			"--inputs","fpm/config/package-inputs",
+			"--force",
+			"--before-install","fpm/scripts/before-install.sh",
+			"--after-install","fpm/scripts/after-install.sh"
+		]
+	}
+	
+	createDeb.dependsOn assemble
 }
 
 project(":" + rootProject.name + "-web") {

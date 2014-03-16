@@ -8,3 +8,5 @@ web/app/bower_components
 .settings
 .project
 .classpath
+
+Gemfile.lock

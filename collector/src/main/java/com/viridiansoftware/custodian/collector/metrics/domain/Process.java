@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.custodian.metrics.domain;
+package com.viridiansoftware.custodian.collector.metrics.domain;
 
 /**
  * A single process outputted from ps

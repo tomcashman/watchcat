@@ -21,61 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.custodian.metrics.domain;
-
+package com.viridiansoftware.custodian.collector.metrics.domain;
 
 /**
- * A single filesystem outputted from df
+ * A single row of connection data outputted from netstat
  *
  * @author Thomas Cashman
  */
-public class Filesystem {
-	private String filesystem;
-	private int size;
-	private int used;
-	private int free;
-	private int percentageUsed;
-	private String mountPoint;
+public class ConnectionsData {
+	private int total;
+	private String address;
 	
-	public Filesystem(String filesystem, int size, int used, int free,
-			int percentageUsed, String mountPoint) {
-		this.filesystem = filesystem;
-		this.size = size;
-		this.used = used;
-		this.free = free;
-		this.percentageUsed = percentageUsed;
-		this.mountPoint = mountPoint;
+	public int getTotal() {
+		return total;
 	}
-
-	public String getFilesystem() {
-		return filesystem;
+	
+	public void setTotal(int total) {
+		this.total = total;
 	}
-
-	public int getSize() {
-		return size;
+	
+	public String getAddress() {
+		return address;
 	}
-
-	public int getUsed() {
-		return used;
-	}
-
-	public int getFree() {
-		return free;
-	}
-
-	public int getPercentageUsed() {
-		return percentageUsed;
-	}
-
-	public String getMountPoint() {
-		return mountPoint;
-	}
-
-	@Override
-	public String toString() {
-		return "Filesystem [filesystem=" + filesystem + ", size=" + size
-				+ "M, used=" + used + "M, available=" + free
-				+ "M, percentageUsed=" + percentageUsed + "%, mountPoint="
-				+ mountPoint + "]";
+	
+	public void setAddress(String address) {
+		this.address = address;
 	}
 }
