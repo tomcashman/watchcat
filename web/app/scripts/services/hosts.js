@@ -5,7 +5,7 @@ angular.module('linuxGraphApp').factory('Hosts',
 			return {
 				list : function() {
 					return ElasticSearch.search({
-						index : 'linux-graph',
+						index : 'custodian',
 						type : 'host',
 						size : 500,
 						body : {
