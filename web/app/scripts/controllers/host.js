@@ -31,7 +31,16 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		values: []
 	}];
 	
+	$scope.bandwidth = [ {
+		key: 'RX',
+		values: []
+	}, {
+		key: 'TX',
+		values: []
+	}];
+	
 	$scope.disks = [];
+	$scope.processes = [];
 	
 	$scope.timeTickFormat = function() {
 		return function(d) {
@@ -103,6 +112,26 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		});
 	};
 	
+	$scope.getBandwidth = function(startTime, endTime) {
+		Metrics.getBandwidth($routeParams.host, startTime, endTime).then(function(response) {
+			var bandwidth = [];
+			bandwidth.push($scope.bandwidth[0]);
+			bandwidth.push($scope.bandwidth[1]);
+			
+			for(var i = 0; i < response.hits.hits.length; i++) {
+				bandwidth[0].values.push([
+					                        response.hits.hits[i]._source.timestamp,
+					                        response.hits.hits[i]._source.rx
+					                        ]);
+				bandwidth[1].values.push([
+					                        response.hits.hits[i]._source.timestamp,
+					                        response.hits.hits[i]._source.tx
+					                        ]);
+			}
+			$scope.bandwidth = bandwidth;
+		});
+	};
+	
 	$scope.getDiskUsage = function(startTime, endTime) {
 		Metrics.getDiskUsage($routeParams.host, startTime, endTime).then(function(response) {
 			var disks = [];
@@ -159,12 +188,28 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		});
 	};
 	
+	$scope.getProcesses = function(startTime, endTime) {
+		Metrics.getProcesses($routeParams.host, startTime, endTime).then(function(response) {
+			if(response.hits.hits.length > 0) {
+				var processes = [];
+				
+				for(var i = 0; i < response.hits.hits[response.hits.hits.length - 1]._source.processes.length && i < 9; i++) {
+					processes.push(response.hits.hits[response.hits.hits.length - 1]._source.processes[i]);
+				}
+				
+				$scope.processes = processes;
+			}
+		});
+	};
+	
 	$scope.$on("$routeChangeSuccess", function(event, current, previous, rejection) {
 		$scope.intervalId = setInterval(function() {
 			$scope.endTime = moment().valueOf();
 		    $scope.getLoadAverage($scope.startTime, $scope.endTime);
 		    $scope.getMemoryUsage($scope.startTime, $scope.endTime);
 		    $scope.getDiskUsage($scope.startTime, $scope.endTime);
+		    $scope.getBandwidth($scope.startTime, $scope.endTime);
+		    $scope.getProcesses($scope.startTime, $scope.endTime);
 			$scope.startTime = $scope.endTime;
 		}, 1000);
 	});

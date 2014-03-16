@@ -31,9 +31,11 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.linuxgraph.collector.metrics.Bandwidth;
 import com.linuxgraph.collector.metrics.DiskUsage;
 import com.linuxgraph.collector.metrics.LoadAverage;
 import com.linuxgraph.collector.metrics.MemoryUsage;
+import com.linuxgraph.collector.metrics.Processes;
 
 /**
  * Gathers metrics of the Linux system every second
@@ -51,12 +53,18 @@ public class LinuxMetricsCollector {
 	private LoadAverage loadAverage;
 	@Autowired
 	private DiskUsage diskUsage;
+	@Autowired
+	private Bandwidth bandwidth;
+	@Autowired
+	private Processes processes;
 	
 	@PostConstruct
 	public void postConstruct() {
 		scheduledExecutorService.scheduleAtFixedRate(loadAverage, 1000, 1000, TimeUnit.MILLISECONDS);
 		scheduledExecutorService.scheduleAtFixedRate(memoryUsage, 1000, 1000, TimeUnit.MILLISECONDS);
 		scheduledExecutorService.scheduleAtFixedRate(diskUsage, 1000, 1000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(bandwidth, 1000, 1000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(processes, 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 
 	public MemoryUsage getMemoryUsage() {
@@ -69,5 +77,13 @@ public class LinuxMetricsCollector {
 
 	public DiskUsage getDiskUsage() {
 		return diskUsage;
+	}
+
+	public Bandwidth getBandwidth() {
+		return bandwidth;
+	}
+
+	public Processes getProcesses() {
+		return processes;
 	}
 }

@@ -5,7 +5,7 @@ package com.linuxgraph.collector.metrics.domain;
 
 
 /**
- *
+ * A single filesystem outputted from df
  *
  * @author Thomas Cashman
  */

@@ -165,6 +165,18 @@ public class ElasticSearchReporter implements Runnable {
 			bulkRequestBuilder.add(client.prepareIndex(hostname, "disks", timestamp)
 					.setSource(diskUsage));
 		}
+		
+		XContentBuilder bandwidth = metricsCollector.getBandwidth().toJson(timestamp);
+		if (bandwidth != null) {
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "bandwidth", timestamp)
+					.setSource(bandwidth));
+		}
+		
+		XContentBuilder processes = metricsCollector.getProcesses().toJson(timestamp);
+		if(processes != null) {
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "processes", timestamp)
+					.setSource(processes));
+		}
 
 		if (bulkRequestBuilder.numberOfActions() > 0) {
 			bulkRequestBuilder.execute().actionGet();
