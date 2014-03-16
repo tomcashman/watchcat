@@ -1,6 +1,5 @@
-.chart {
-	width: 400px;
-	height: 400px;
+body {
+	background-image: url('../images/brushed.png');
 }
 
 .btn-default,
