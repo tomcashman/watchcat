@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routeParams, Metrics) {
+angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routeParams, $interval, Metrics) {
 	$scope.loadAverage = [
 	                      {
 	                    	  key: '1 min.',
@@ -15,6 +15,7 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	                    	  values: []
 	                      }
 	                      ];
+	
 	$scope.ram = [ {
 		key: 'Total',
 		values: []
@@ -52,21 +53,16 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	
 	$scope.getLoadAverage = function(startTime, endTime) {
 		Metrics.getLoadAverage($routeParams.host, startTime, endTime).then(function(response) {
-			var averages = [];
-			averages.push($scope.loadAverage[0]);
-			averages.push($scope.loadAverage[1]);
-			averages.push($scope.loadAverage[2]);
-			
 			for(var i = 0; i < response.hits.hits.length; i++) {
-				averages[0].values.push([
+				$scope.loadAverage[0].values.push([
 				                        response.hits.hits[i]._source.timestamp,
 				                        response.hits.hits[i]._source.oneMinuteAverage
 				                        ]);
-				averages[1].values.push([
+				$scope.loadAverage[1].values.push([
 				                         response.hits.hits[i]._source.timestamp,
 				                         response.hits.hits[i]._source.fiveMinuteAverage
 				                         ]);
-				averages[2].values.push([
+				$scope.loadAverage[2].values.push([
 				                            response.hits.hits[i]._source.timestamp,
 				                            response.hits.hits[i]._source.fifteenMinuteAverage
 				                            ]);
@@ -74,71 +70,50 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 			
 			if(response.hits.hits.length > 0) {
 				$scope.cpuCores = response.hits.hits[response.hits.hits.length - 1]._source.cpuCores;
-				$scope.loadAverage = averages;
 			}
 		});
 	};
 	
 	$scope.getMemoryUsage = function(startTime, endTime) {
 		Metrics.getMemoryUsage($routeParams.host, startTime, endTime).then(function(response) {
-			var ram = [];
-			ram.push($scope.ram[0]);
-			ram.push($scope.ram[1]);
-			
-			var swap = [];
-			swap.push($scope.swap[0]);
-			swap.push($scope.swap[1]);
-			
 			for(var i = 0; i < response.hits.hits.length; i++) {
-				ram[0].values.push([
+				$scope.ram[0].values.push([
 				                        response.hits.hits[i]._source.timestamp,
 				                        response.hits.hits[i]._source.totalMemory
 				                        ]);
-				ram[1].values.push([
+				$scope.ram[1].values.push([
 				                         response.hits.hits[i]._source.timestamp,
 				                         response.hits.hits[i]._source.usedMemory
 				                         ]);
-				swap[0].values.push([
+				$scope.swap[0].values.push([
 			                        response.hits.hits[i]._source.timestamp,
 			                        response.hits.hits[i]._source.totalSwap
 			                        ]);
-				swap[1].values.push([
+				$scope.swap[1].values.push([
 			                         response.hits.hits[i]._source.timestamp,
 			                         response.hits.hits[i]._source.usedSwap
 			                         ]);
 			}
-			$scope.ram = ram;
-			$scope.swap = swap;
 		});
 	};
 	
 	$scope.getBandwidth = function(startTime, endTime) {
 		Metrics.getBandwidth($routeParams.host, startTime, endTime).then(function(response) {
-			var bandwidth = [];
-			bandwidth.push($scope.bandwidth[0]);
-			bandwidth.push($scope.bandwidth[1]);
-			
 			for(var i = 0; i < response.hits.hits.length; i++) {
-				bandwidth[0].values.push([
+				$scope.bandwidth[0].values.push([
 					                        response.hits.hits[i]._source.timestamp,
 					                        response.hits.hits[i]._source.rx
 					                        ]);
-				bandwidth[1].values.push([
+				$scope.bandwidth[1].values.push([
 					                        response.hits.hits[i]._source.timestamp,
 					                        response.hits.hits[i]._source.tx
 					                        ]);
 			}
-			$scope.bandwidth = bandwidth;
 		});
 	};
 	
 	$scope.getDiskUsage = function(startTime, endTime) {
 		Metrics.getDiskUsage($routeParams.host, startTime, endTime).then(function(response) {
-			var disks = [];
-			for(var i = 0; i < $scope.disks.length; i++) {
-				disks.push($scope.disks[i]);
-			}
-			
 			for(var i = 0; i < response.hits.hits.length; i++) {
 				var timestamp = response.hits.hits[i]._source.timestamp;
 				for(var j = 0; j < response.hits.hits[i]._source.filesystems.length; j++) {
@@ -146,30 +121,17 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 					var mountPoint = response.hits.hits[i]._source.filesystems[j].mountPoint;
 					var exists = false;
 					
-					for(var k = 0; k < disks.length; k++) {
-						if(disks[k].filesystem === filesystem) {
-							var graph = [];
-							for(var l = 0; l < disks[k].graph.length; l++) {
-								graph.push(disks[k].graph[l]);
-							}
-							
-							var sizeGraph = graph[0];
-							sizeGraph.values.push([timestamp, response.hits.hits[i]._source.filesystems[j].size]);
-							graph[0] = sizeGraph;
-							
-							var usedGraph = graph[1];
-							usedGraph.values.push([timestamp, response.hits.hits[i]._source.filesystems[j].used]);
-							graph[1] = usedGraph;
-							
-							disks[k].graph = graph;
-							
+					for(var k = 0; k < $scope.disks.length; k++) {
+						if($scope.disks[k].filesystem === filesystem) {
+							$scope.disks[k].graph[0].values.push([timestamp, response.hits.hits[i]._source.filesystems[j].size]);
+							$scope.disks[k].graph[1].values.push([timestamp, response.hits.hits[i]._source.filesystems[j].used]);
 							exists = true;
 							break;
 						}
 					}
 					
 					if(!exists) {
-						disks.push({
+						$scope.disks.push({
 							filesystem: filesystem,
 							mountPoint: mountPoint,
 							graph: [{
@@ -183,8 +145,6 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 					}
 				}
 			}
-			
-			$scope.disks = disks;
 		});
 	};
 	
@@ -203,7 +163,7 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	};
 	
 	$scope.$on("$routeChangeSuccess", function(event, current, previous, rejection) {
-		$scope.intervalId = setInterval(function() {
+		$scope.intervalId = $interval(function() {
 			$scope.endTime = moment().valueOf();
 		    $scope.getLoadAverage($scope.startTime, $scope.endTime);
 		    $scope.getMemoryUsage($scope.startTime, $scope.endTime);
@@ -214,6 +174,6 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		}, 1000);
 	});
 	$scope.$on("$routeChangeStart", function(event, current, previous, rejection) {
-		clearInterval($scope.intervalId);
+		$interval.cancel($scope.intervalId);
 	});
 });
