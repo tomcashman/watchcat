@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.linuxgraph.collector.metrics.reporting;
+package com.viridiansoftware.custodian.metrics.reporting;
 
 import java.net.InetAddress;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,7 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.linuxgraph.collector.util.ShellCommand;
+import com.viridiansoftware.custodian.util.ShellCommand;
 
 /**
  * Inserts the current metrics every second into ElasticSearch
@@ -52,8 +52,8 @@ import com.linuxgraph.collector.util.ShellCommand;
  */
 @Component
 public class ElasticSearchReporter implements Runnable {
-	private static String LINUX_GRAPH_INDEX = "linux-graph";
-	private static String LINUX_GRAPH_TYPE = "host";
+	private static String CUSTODIAN_INDEX = "custodian";
+	private static String CUSTODIAN_TYPE = "host";
 
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
@@ -128,10 +128,10 @@ public class ElasticSearchReporter implements Runnable {
 		try {
 			XContentBuilder hostEntry = XContentFactory.jsonBuilder().startObject().field("host", hostname).endObject();
 			
-			client.prepareIndex(LINUX_GRAPH_INDEX, LINUX_GRAPH_TYPE, hostname)
+			client.prepareIndex(CUSTODIAN_INDEX, CUSTODIAN_TYPE, hostname)
 					.setSource(hostEntry).execute()
 					.actionGet();
-			client.admin().indices().prepareRefresh(LINUX_GRAPH_INDEX).execute()
+			client.admin().indices().prepareRefresh(CUSTODIAN_INDEX).execute()
 					.actionGet();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,3 +1,3 @@
 var Configuration = {
-		"elasticsearchnodes" : ["172.16.234.141:9200"]
+		"elasticsearchnodes" : ["127.0.0.1:9200"]
 };

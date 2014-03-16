@@ -21,49 +21,61 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.linuxgraph.collector.util;
+package com.viridiansoftware.custodian.metrics.domain;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 /**
- * Provides execution and output retrieval of shell commands
- * 
+ * A single filesystem outputted from df
+ *
  * @author Thomas Cashman
  */
-public class ShellCommand {
-	private String [] command;
-
-	/**
-	 * Constructor
-	 * @param command The shell command to execute
-	 */
-	public ShellCommand(String command) {
-		this.command = new String [] { "/bin/sh", "-c", command };
+public class Filesystem {
+	private String filesystem;
+	private int size;
+	private int used;
+	private int free;
+	private int percentageUsed;
+	private String mountPoint;
+	
+	public Filesystem(String filesystem, int size, int used, int free,
+			int percentageUsed, String mountPoint) {
+		this.filesystem = filesystem;
+		this.size = size;
+		this.used = used;
+		this.free = free;
+		this.percentageUsed = percentageUsed;
+		this.mountPoint = mountPoint;
 	}
 
-	/**
-	 * Executes the shell command and returns its output
-	 * @return An empty string on error
-	 */
-	public String execute() {
-		StringBuffer output = new StringBuffer();
+	public String getFilesystem() {
+		return filesystem;
+	}
 
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
-			String line = "";
-			while ((line = reader.readLine()) != null) {
-				output.append(line + "\n");
-			}
+	public int getSize() {
+		return size;
+	}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public int getUsed() {
+		return used;
+	}
 
-		return output.toString();
+	public int getFree() {
+		return free;
+	}
+
+	public int getPercentageUsed() {
+		return percentageUsed;
+	}
+
+	public String getMountPoint() {
+		return mountPoint;
+	}
+
+	@Override
+	public String toString() {
+		return "Filesystem [filesystem=" + filesystem + ", size=" + size
+				+ "M, used=" + used + "M, available=" + free
+				+ "M, percentageUsed=" + percentageUsed + "%, mountPoint="
+				+ mountPoint + "]";
 	}
 }

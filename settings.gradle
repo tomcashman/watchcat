@@ -1,3 +1,3 @@
 include 'collector', 'web'
-rootProject.name = 'linux-graph'
+rootProject.name = 'custodian'
 rootProject.children.each { it.name = rootProject.name + "-" + it.name }

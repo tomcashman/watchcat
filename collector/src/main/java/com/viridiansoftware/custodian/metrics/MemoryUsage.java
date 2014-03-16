@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.linuxgraph.collector.metrics;
+package com.viridiansoftware.custodian.metrics;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,7 +29,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
-import com.linuxgraph.collector.util.ShellCommand;
+import com.viridiansoftware.custodian.util.ShellCommand;
 
 /**
  * Gathers the current RAM and swap usage of the system

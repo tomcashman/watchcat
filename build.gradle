@@ -18,7 +18,7 @@ subprojects {
 	apply plugin: 'maven'
 
 	version = "1.0.0-SNAPSHOT"
-	group = "com.linuxgraph"
+	group = "com.viridiansoftware.custodian"
 	
 	uploadArchives {
 		repositories {
@@ -48,7 +48,7 @@ project(":" + rootProject.name + "-collector") {
 	}
 	
 	jar {
-    	baseName = 'linux-graph-collector'
+    	baseName = 'custodian-collector'
 	}
 }
 
