@@ -1,48 +1,51 @@
 'use strict';
 
 angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routeParams, $interval, Metrics) {
-	$scope.loadAverage = [
-	                      {
-	                    	  key: '1 min.',
-	                    	  values: []
-	                      },
-	                      {
-	                    	  key: '5 min.',
-	                    	  values: []
-	                      },
-	                      {
-	                    	  key: '15 min.',
-	                    	  values: []
-	                      }
-	                      ];
-	
-	$scope.ram = [ {
-		key: 'Total',
-		values: []
-	}, {
-		key: 'Used',
-		values: []
-	}];
-	
-	$scope.swap = [ {
-		key: 'Total',
-		values: []
-	}, {
-		key: 'Used',
-		values: []
-	}];
-	
-	$scope.bandwidth = [ {
-		key: 'RX',
-		values: []
-	}, {
-		key: 'TX',
-		values: []
-	}];
-	
-	$scope.networkConnections = [];
-	$scope.disks = [];
-	$scope.processes = [];
+	$scope.resetGraphs = function() {
+		$scope.loadAverage = [
+		                      {
+		                    	  key: '1 min.',
+		                    	  values: []
+		                      },
+		                      {
+		                    	  key: '5 min.',
+		                    	  values: []
+		                      },
+		                      {
+		                    	  key: '15 min.',
+		                    	  values: []
+		                      }
+		                      ];
+		
+		$scope.ram = [ {
+			key: 'Total',
+			values: []
+		}, {
+			key: 'Used',
+			values: []
+		}];
+		
+		$scope.swap = [ {
+			key: 'Total',
+			values: []
+		}, {
+			key: 'Used',
+			values: []
+		}];
+		
+		$scope.bandwidth = [ {
+			key: 'RX',
+			values: []
+		}, {
+			key: 'TX',
+			values: []
+		}];
+		
+		$scope.networkConnections = [];
+		$scope.disks = [];
+		$scope.processes = [];
+	};
+	$scope.resetGraphs();
 	
 	$scope.timeTickFormat = function() {
 		return function(d) {
@@ -191,19 +194,42 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		});
 	};
 	
-	$scope.$on("$routeChangeSuccess", function(event, current, previous, rejection) {
+	$scope.poll = function() {
+		$scope.endTime = moment().valueOf();
+	    $scope.getLoadAverage($scope.startTime, $scope.endTime);
+	    $scope.getMemoryUsage($scope.startTime, $scope.endTime);
+	    $scope.getDiskUsage($scope.startTime, $scope.endTime);
+	    $scope.getBandwidth($scope.startTime, $scope.endTime);
+	    $scope.getProcesses($scope.startTime, $scope.endTime);
+	    $scope.getNetworkConnections($scope.startTime, $scope.endTime);
+		$scope.startTime = $scope.endTime;
+	};
+	
+	$scope.beginPolling = function() {
 		$scope.intervalId = $interval(function() {
-			$scope.endTime = moment().valueOf();
-		    $scope.getLoadAverage($scope.startTime, $scope.endTime);
-		    $scope.getMemoryUsage($scope.startTime, $scope.endTime);
-		    $scope.getDiskUsage($scope.startTime, $scope.endTime);
-		    $scope.getBandwidth($scope.startTime, $scope.endTime);
-		    $scope.getProcesses($scope.startTime, $scope.endTime);
-		    $scope.getNetworkConnections($scope.startTime, $scope.endTime);
-			$scope.startTime = $scope.endTime;
+			$scope.poll();
 		}, 1000);
+	};
+	$scope.cancelPolling = function() {
+		$interval.cancel($scope.intervalId);
+	};
+	
+	$scope.$on("$routeChangeSuccess", function(event, current, previous, rejection) {
 	});
 	$scope.$on("$routeChangeStart", function(event, current, previous, rejection) {
-		$interval.cancel($scope.intervalId);
+		$scope.cancelPolling();
+	});
+	$scope.$on("UPDATE_TIME_PERIOD", function(event, timePeriodData){
+		$scope.cancelPolling();
+		
+		$scope.startTime = timePeriodData.timePeriod[0];
+		$scope.endTime = timePeriodData.timePeriod[1];
+		$scope.resetGraphs();
+		
+		if(timePeriodData.live) {
+			$scope.beginPolling();
+		} else {
+			$scope.poll();
+		}
 	});
 });

@@ -8,6 +8,15 @@
 		</button>
 		<a class="navbar-brand" href="#"><i class="fa fa-tachometer fa-fw"></i>
 			linux-graph</a>
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown" ng-show="hosts.length > 0"><a href="#" class="dropdown-toggle"
+				data-toggle="dropdown">{{timePeriods[selectedTimePeriod]}} <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li data-ng-repeat="timePeriod in timePeriods track by $index"
+						ng-class="{'active' : $index == selectedTimePeriod}"><a
+						ng-click="timePeriodClicked($index)">{{timePeriod}}</a></li>
+				</ul></li>
+		</ul>
 	</div>
 
 	<!-- Collect the nav links, forms, and other content for toggling -->
