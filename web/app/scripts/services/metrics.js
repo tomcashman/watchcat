@@ -107,6 +107,27 @@ angular.module('linuxGraphApp').factory('Metrics',
 							}
 						}
 					});
+				},
+				getNetworkConnections : function(host, startTime, endTime) {
+					return ElasticSearch.search({
+						index : host,
+						type : 'connections',
+						size : Math.round(((endTime - startTime)/ 1000) + 1),
+						body : {
+							sort : [ {
+								"timestamp" : "asc"
+							}, "_score" ],
+							query : {
+								"range" : {
+							        "timestamp" : {
+							            "gte" : startTime,
+							            "lte" : endTime,
+							            "boost" : 2.0
+							        }
+							    }
+							}
+						}
+					});
 				}
 			};
 		} ]);

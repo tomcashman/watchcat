@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.linuxgraph.collector.util.ShellCommand;
 
 /**
- *
+ * Gathers RX and TX statistics
  *
  * @author Thomas Cashman
  */

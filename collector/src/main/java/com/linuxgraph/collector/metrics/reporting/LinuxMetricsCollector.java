@@ -35,6 +35,7 @@ import com.linuxgraph.collector.metrics.Bandwidth;
 import com.linuxgraph.collector.metrics.DiskUsage;
 import com.linuxgraph.collector.metrics.LoadAverage;
 import com.linuxgraph.collector.metrics.MemoryUsage;
+import com.linuxgraph.collector.metrics.NetworkConnections;
 import com.linuxgraph.collector.metrics.Processes;
 
 /**
@@ -57,6 +58,8 @@ public class LinuxMetricsCollector {
 	private Bandwidth bandwidth;
 	@Autowired
 	private Processes processes;
+	@Autowired
+	private NetworkConnections networkConnections;
 	
 	@PostConstruct
 	public void postConstruct() {
@@ -65,6 +68,7 @@ public class LinuxMetricsCollector {
 		scheduledExecutorService.scheduleAtFixedRate(diskUsage, 1000, 1000, TimeUnit.MILLISECONDS);
 		scheduledExecutorService.scheduleAtFixedRate(bandwidth, 1000, 1000, TimeUnit.MILLISECONDS);
 		scheduledExecutorService.scheduleAtFixedRate(processes, 1000, 1000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(networkConnections, 1000, 1000, TimeUnit.MILLISECONDS);
 	}
 
 	public MemoryUsage getMemoryUsage() {
@@ -85,5 +89,9 @@ public class LinuxMetricsCollector {
 
 	public Processes getProcesses() {
 		return processes;
+	}
+
+	public NetworkConnections getNetworkConnections() {
+		return networkConnections;
 	}
 }

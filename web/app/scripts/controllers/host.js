@@ -40,6 +40,7 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		values: []
 	}];
 	
+	$scope.networkConnections = [];
 	$scope.disks = [];
 	$scope.processes = [];
 	
@@ -162,6 +163,34 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		});
 	};
 	
+	$scope.getNetworkConnections = function(startTime, endTime) {
+		Metrics.getNetworkConnections($routeParams.host, startTime, endTime).then(function(response) {
+			for(var i = 0; i < response.hits.hits.length; i++) {
+				var timestamp = response.hits.hits[i]._source.timestamp;
+				for(var j = 0; j < response.hits.hits[i]._source.connections.length; j++) {
+					var address = response.hits.hits[i]._source.connections[j].address;
+					var totalConnections = response.hits.hits[i]._source.connections[j].total;
+					var exists = false;
+					
+					for(var k = 0; k < $scope.networkConnections.length; k++) {
+						if($scope.networkConnections[k].key === address) {
+							$scope.networkConnections[k].values.push([timestamp, totalConnections]);
+							exists = true;
+							break;
+						}
+					}
+					
+					if(!exists) {
+						$scope.networkConnections.push({
+							key: address,
+							values: [[timestamp, totalConnections]]
+						});
+					}
+				}
+			}
+		});
+	};
+	
 	$scope.$on("$routeChangeSuccess", function(event, current, previous, rejection) {
 		$scope.intervalId = $interval(function() {
 			$scope.endTime = moment().valueOf();
@@ -170,6 +199,7 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		    $scope.getDiskUsage($scope.startTime, $scope.endTime);
 		    $scope.getBandwidth($scope.startTime, $scope.endTime);
 		    $scope.getProcesses($scope.startTime, $scope.endTime);
+		    $scope.getNetworkConnections($scope.startTime, $scope.endTime);
 			$scope.startTime = $scope.endTime;
 		}, 1000);
 	});

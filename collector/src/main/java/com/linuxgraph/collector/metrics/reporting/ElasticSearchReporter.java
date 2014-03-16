@@ -177,6 +177,12 @@ public class ElasticSearchReporter implements Runnable {
 			bulkRequestBuilder.add(client.prepareIndex(hostname, "processes", timestamp)
 					.setSource(processes));
 		}
+		
+		XContentBuilder networkConnections = metricsCollector.getNetworkConnections().toJson(timestamp);
+		if(networkConnections != null) {
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "connections", timestamp)
+					.setSource(networkConnections));
+		}
 
 		if (bulkRequestBuilder.numberOfActions() > 0) {
 			bulkRequestBuilder.execute().actionGet();
