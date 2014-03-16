@@ -1,4 +1,4 @@
-linux-graph
+custodian
 ===========
 
-Low-overhead linux monitoring with historical data
+Near realtime Linux cluster performance monitoring with historical data
