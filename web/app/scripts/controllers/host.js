@@ -31,6 +31,8 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		values: []
 	}];
 	
+	$scope.disks = [];
+	
 	$scope.timeTickFormat = function() {
 		return function(d) {
 			return d3.time.format('%X')(new Date(d));
@@ -60,8 +62,11 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 				                            response.hits.hits[i]._source.fifteenMinuteAverage
 				                            ]);
 			}
-			$scope.cpuCores = response.hits.hits[response.hits.hits.length - 1]._source.cpuCores;
-			$scope.loadAverage = averages;
+			
+			if(response.hits.hits.length > 0) {
+				$scope.cpuCores = response.hits.hits[response.hits.hits.length - 1]._source.cpuCores;
+				$scope.loadAverage = averages;
+			}
 		});
 	};
 	
@@ -98,11 +103,68 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 		});
 	};
 	
+	$scope.getDiskUsage = function(startTime, endTime) {
+		Metrics.getDiskUsage($routeParams.host, startTime, endTime).then(function(response) {
+			var disks = [];
+			for(var i = 0; i < $scope.disks.length; i++) {
+				disks.push($scope.disks[i]);
+			}
+			
+			for(var i = 0; i < response.hits.hits.length; i++) {
+				var timestamp = response.hits.hits[i]._source.timestamp;
+				for(var j = 0; j < response.hits.hits[i]._source.filesystems.length; j++) {
+					var filesystem = response.hits.hits[i]._source.filesystems[j].filesystem;
+					var mountPoint = response.hits.hits[i]._source.filesystems[j].mountPoint;
+					var exists = false;
+					
+					for(var k = 0; k < disks.length; k++) {
+						if(disks[k].filesystem === filesystem) {
+							var graph = [];
+							for(var l = 0; l < disks[k].graph.length; l++) {
+								graph.push(disks[k].graph[l]);
+							}
+							
+							var sizeGraph = graph[0];
+							sizeGraph.values.push([timestamp, response.hits.hits[i]._source.filesystems[j].size]);
+							graph[0] = sizeGraph;
+							
+							var usedGraph = graph[1];
+							usedGraph.values.push([timestamp, response.hits.hits[i]._source.filesystems[j].used]);
+							graph[1] = usedGraph;
+							
+							disks[k].graph = graph;
+							
+							exists = true;
+							break;
+						}
+					}
+					
+					if(!exists) {
+						disks.push({
+							filesystem: filesystem,
+							mountPoint: mountPoint,
+							graph: [{
+								key: 'Total',
+								values: [[timestamp, response.hits.hits[i]._source.filesystems[j].size]]
+							}, {
+								key: 'Used',
+								values: [[timestamp, response.hits.hits[i]._source.filesystems[j].used]]
+							}]
+						});
+					}
+				}
+			}
+			
+			$scope.disks = disks;
+		});
+	};
+	
 	$scope.$on("$routeChangeSuccess", function(event, current, previous, rejection) {
 		$scope.intervalId = setInterval(function() {
 			$scope.endTime = moment().valueOf();
 		    $scope.getLoadAverage($scope.startTime, $scope.endTime);
 		    $scope.getMemoryUsage($scope.startTime, $scope.endTime);
+		    $scope.getDiskUsage($scope.startTime, $scope.endTime);
 			$scope.startTime = $scope.endTime;
 		}, 1000);
 	});

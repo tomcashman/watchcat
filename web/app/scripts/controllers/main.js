@@ -1,6 +1,8 @@
 'use strict';
 
 angular.module('linuxGraphApp').controller('MainCtrl', function($scope, $location, Hosts) {
+	$scope.online = true;
+	
 	Hosts.list().then(function(response) {
 		var result = [];
 		for (var i = 0; i < response.hits.hits.length; i++) {
@@ -8,8 +10,10 @@ angular.module('linuxGraphApp').controller('MainCtrl', function($scope, $locatio
 		}
 		if(result.length > 0) {
 			$location.path("/" + result[0]);
+		} else {
+			$scope.online = false;
 		}
 	}, function(error) {
-		
+		$scope.online = false;
 	});
 });
