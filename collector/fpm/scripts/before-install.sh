@@ -5,3 +5,4 @@ echo "Creating the folders needed for the install"
 mkdir -p /etc/custodian
 mkdir -p /opt/custodian/collector/bin
 mkdir -p /opt/custodian/wrapper
+mkdir -p /var/log/custodian/collector

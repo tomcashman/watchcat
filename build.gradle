@@ -65,7 +65,7 @@ project(":" + rootProject.name + "-collector") {
 			"--maintainer","Support Staff<support@viridiansoftware.com>",
 			"--version",version,
 			"--url","custodian.viridiansoftware.com",
-			"--prefix","usr/share/viridiansoftware/install/custodian",
+			"--prefix","usr/share/viridiansoftware/install/custodian-collector",
 			"--inputs","fpm/config/package-inputs",
 			"--force",
 			"--before-install","fpm/scripts/before-install.sh",

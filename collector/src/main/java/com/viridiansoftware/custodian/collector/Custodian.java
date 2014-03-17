@@ -40,7 +40,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  */
 @ComponentScan(basePackages={"com.viridiansoftware.custodian"})
 @EnableAutoConfiguration
-@PropertySource("file:/etc/custodian/elasticsearch.properties")
+@PropertySource("file:/etc/custodian/collector.properties")
 public class Custodian {
 	private static ScheduledExecutorService scheduledExecutorService;
 	
