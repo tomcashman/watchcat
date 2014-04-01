@@ -208,7 +208,7 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	$scope.beginPolling = function() {
 		$scope.intervalId = $interval(function() {
 			$scope.poll();
-		}, 1000);
+		}, 2500);
 	};
 	$scope.cancelPolling = function() {
 		$interval.cancel($scope.intervalId);

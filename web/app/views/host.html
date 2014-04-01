@@ -68,10 +68,10 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4" data-ng-repeat="disk in disks">
+	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4" bindonce data-ng-repeat="disk in disks">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<h3 class="panel-title"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;{{disk.mountPoint}} ({{disk.filesystem}})</h3>
+				<h3 class="panel-title"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;<span bo-html="disk.mountPoint"></span> (<span bo-text="disk.filesystem"></span>)</h3>
 			</div>
 			<div class="panel-body">
 				<nvd3-line-chart data="disk.graph" showXAxis="true" objectEquality="true"
@@ -106,18 +106,18 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr data-ng-repeat="process in processes">
-							<td>{{process.user}}</td>
-							<td>{{process.pid}}</td>
-							<td>{{process.cpu}}</td>
-							<td>{{process.memory}}</td>
-							<td class="visible-lg">{{process.vsz}}</td>
-							<td class="visible-lg">{{process.rss}}</td>
-							<td class="visible-lg">{{process.tty}}</td>
-							<td class="visible-lg">{{process.stat}}</td>
-							<td>{{process.start}}</td>
-							<td class="visible-lg">{{process.time}}</td>
-							<td>{{process.command}}</td>
+						<tr bindonce data-ng-repeat="process in processes">
+							<td bo-text="process.user"></td>
+							<td bo-text="process.pid"></td>
+							<td bo-text="process.cpu"></td>
+							<td bo-text="process.memory"></td>
+							<td class="visible-lg" bo-text="process.vsz"></td>
+							<td class="visible-lg" bo-text="process.rss"></td>
+							<td class="visible-lg" bo-text="process.tty"></td>
+							<td class="visible-lg" bo-text="process.stat"></td>
+							<td bo-text="process.start"></td>
+							<td class="visible-lg" bo-text="process.time"></td>
+							<td bo-text="process.command"></td>
 						</tr>
 					</tbody>
 				</table>
