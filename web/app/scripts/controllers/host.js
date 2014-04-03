@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routeParams, $interval, Metrics) {
+angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $route, $routeParams, $interval, $window, Metrics) {
 	$scope.resetGraphs = function() {
 		$scope.loadAverage = [
 		                      {
@@ -59,13 +59,15 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	$scope.getLoadAverage = function(startTime, endTime, lastPollTime) {
 		Metrics.getLoadAverage($routeParams.host, startTime, endTime).then(function(response) {
 			if(lastPollTime === startTime) {
+				/* Push existing data to the left, dropping the item at index 0 */
 				for(var i = 1; i < $scope.loadAverage[0].values.length; i++) {
 					$scope.loadAverage[0].values[i - 1] = $scope.loadAverage[0].values[i];
 					$scope.loadAverage[1].values[i - 1] = $scope.loadAverage[1].values[i];
 					$scope.loadAverage[2].values[i - 1] = $scope.loadAverage[2].values[i];
 				}
+				
+				/* Insert new data */
 				var index = $scope.loadAverage[0].values.length - 1;
-
 				$scope.loadAverage[0].values[index] = [
 					response.hits.hits[0]._source.timestamp,
 					response.hits.hits[0]._source.oneMinuteAverage
@@ -104,12 +106,15 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	$scope.getMemoryUsage = function(startTime, endTime, lastPollTime) {
 		Metrics.getMemoryUsage($routeParams.host, startTime, endTime).then(function(response) {
 			if(lastPollTime === startTime) {
+				/* Push existing data to the left, dropping the item at index 0 */
 				for(var i = 1; i < $scope.ram[0].values.length; i++) {
 					$scope.ram[0].values[i - 1] = $scope.ram[0].values[i];
 					$scope.ram[1].values[i - 1] = $scope.ram[1].values[i];
 					$scope.swap[0].values[i - 1] = $scope.swap[0].values[i];
 					$scope.swap[1].values[i - 1] = $scope.swap[1].values[i];
 				}
+				
+				/* Insert new data */
 				var index = $scope.ram[0].values.length - 1;
 
 				$scope.ram[0].values[index]= [
@@ -154,11 +159,13 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	$scope.getBandwidth = function(startTime, endTime, lastPollTime) {
 		Metrics.getBandwidth($routeParams.host, startTime, endTime).then(function(response) {
 			if(lastPollTime === startTime) {
+				/* Push existing data to the left, dropping the item at index 0 */
 				for(var i = 1; i < $scope.bandwidth[0].values.length; i++) {
 					$scope.bandwidth[0].values[i - 1] = $scope.bandwidth[0].values[i];
 					$scope.bandwidth[1].values[i - 1] = $scope.bandwidth[1].values[i];
 				}
 
+				/* Insert new data */
 				var index = $scope.bandwidth[0].values.length - 1;
 
 				$scope.bandwidth[0].values[index] = [
@@ -215,10 +222,13 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 						});
 					} else {
 						if(startTime === lastPollTime) {
+							/* Push existing data to the left, dropping the item at index 0 */
 							for(var l = 1; l < $scope.disks[diskIndex].graph[0].values.length; l++) {
 								$scope.disks[diskIndex].graph[0].values[l - 1] = $scope.disks[diskIndex].graph[0].values[l];
 								$scope.disks[diskIndex].graph[1].values[l - 1] = $scope.disks[diskIndex].graph[1].values[l];
 							}
+							
+							/* Insert new data */
 							var index = $scope.disks[diskIndex].graph[0].values.length - 1;
 
 							$scope.disks[diskIndex].graph[0].values[index] = [timestamp, response.hits.hits[i]._source.filesystems[j].size];
@@ -317,6 +327,7 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	$scope.cancelPolling = function() {
 		$interval.cancel($scope.intervalId);
 	};
+	$scope.live = true;
 	
 	$scope.$on("$routeChangeSuccess", function(event, current, previous, rejection) {
 	});
@@ -325,16 +336,22 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $routePa
 	});
 	$scope.$on("UPDATE_TIME_PERIOD", function(event, timePeriodData){
 		$scope.cancelPolling();
+		$scope.live = timePeriodData.live;
 		
 		$scope.lastPollTime = moment().subtract('minutes', 2).valueOf();
 		$scope.startTime = timePeriodData.timePeriod[0];
 		$scope.endTime = timePeriodData.timePeriod[1];
 		$scope.resetGraphs();
 		
-		if(timePeriodData.live) {
+		if($scope.live) {
 			$scope.beginPolling();
 		} else {
 			$scope.poll();
 		}
 	});
+	
+	$window.addEventListener('focus', function() {
+		$route.reload();
+	});
+	$window.addEventListener('blur', $scope.cancelPolling());
 });
