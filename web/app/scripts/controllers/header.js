@@ -8,7 +8,7 @@ angular.module('linuxGraphApp').controller('HeaderCtrl', function($rootScope, $s
 	$scope.hosts = [];
 	
 	$scope.selectedTimePeriod = 0;
-	$scope.timePeriods = ["1 minute ago to a few seconds ago", "5 minutes ago to a few seconds ago", "Last 15 minutes", "Last 30 minutes", "Last hour"];
+	$scope.timePeriods = ["1 minute ago to now", "5 minutes ago to now", "Last 15 minutes", "Last 30 minutes", "Last hour"];
 	
 	Hosts.list().then(function(response) {
 		var result = [];
