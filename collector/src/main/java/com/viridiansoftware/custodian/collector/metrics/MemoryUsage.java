@@ -85,7 +85,7 @@ public class MemoryUsage implements Runnable {
 		return usedSwap.get();
 	}
 	
-	public XContentBuilder toJson(String timestamp) {
+	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
 			builder = builder.startObject();

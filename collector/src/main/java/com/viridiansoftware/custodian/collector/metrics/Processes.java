@@ -83,7 +83,7 @@ public class Processes implements Runnable {
 		return processes.get();
 	}
 	
-	public XContentBuilder toJson(String timestamp) {
+	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
 			builder = builder.startObject();

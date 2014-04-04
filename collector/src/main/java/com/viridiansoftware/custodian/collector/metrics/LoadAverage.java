@@ -90,7 +90,7 @@ public class LoadAverage implements Runnable {
 		return fifteenMinuteAverage.get();
 	}
 	
-	public XContentBuilder toJson(String timestamp) {
+	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
 			builder = builder.startObject();

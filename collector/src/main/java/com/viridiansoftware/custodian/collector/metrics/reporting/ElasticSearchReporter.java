@@ -143,44 +143,45 @@ public class ElasticSearchReporter implements Runnable {
 	public void run() {
 		BulkRequestBuilder bulkRequestBuilder = client.prepareBulk();
 
-		String timestamp = String.valueOf(System.currentTimeMillis());
+		long timestamp = System.currentTimeMillis();
+		String timestampStr = String.valueOf(timestamp);
 
 		XContentBuilder loadAverage = metricsCollector.getLoadAverage().toJson(
 				timestamp);
 		if (loadAverage != null) {
-			bulkRequestBuilder.add(client.prepareIndex(hostname, "load", timestamp)
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "load", timestampStr)
 					.setSource(loadAverage));
 		}
 
 		XContentBuilder memoryUsage = metricsCollector.getMemoryUsage().toJson(
 				timestamp);
 		if (memoryUsage != null) {
-			bulkRequestBuilder.add(client.prepareIndex(hostname, "memory", timestamp)
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "memory", timestampStr)
 					.setSource(memoryUsage));
 		}
 
 		XContentBuilder diskUsage = metricsCollector.getDiskUsage().toJson(
 				timestamp);
 		if (diskUsage != null) {
-			bulkRequestBuilder.add(client.prepareIndex(hostname, "disks", timestamp)
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "disks", timestampStr)
 					.setSource(diskUsage));
 		}
 		
 		XContentBuilder bandwidth = metricsCollector.getBandwidth().toJson(timestamp);
 		if (bandwidth != null) {
-			bulkRequestBuilder.add(client.prepareIndex(hostname, "bandwidth", timestamp)
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "bandwidth", timestampStr)
 					.setSource(bandwidth));
 		}
 		
 		XContentBuilder processes = metricsCollector.getProcesses().toJson(timestamp);
 		if(processes != null) {
-			bulkRequestBuilder.add(client.prepareIndex(hostname, "processes", timestamp)
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "processes", timestampStr)
 					.setSource(processes));
 		}
 		
 		XContentBuilder networkConnections = metricsCollector.getNetworkConnections().toJson(timestamp);
 		if(networkConnections != null) {
-			bulkRequestBuilder.add(client.prepareIndex(hostname, "connections", timestamp)
+			bulkRequestBuilder.add(client.prepareIndex(hostname, "connections", timestampStr)
 					.setSource(networkConnections));
 		}
 

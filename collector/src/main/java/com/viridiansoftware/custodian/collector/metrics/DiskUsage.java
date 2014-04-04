@@ -72,7 +72,7 @@ public class DiskUsage implements Runnable {
 		return filesystems.get();
 	}
 	
-	public XContentBuilder toJson(String timestamp) {
+	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
 			builder = builder.startObject();

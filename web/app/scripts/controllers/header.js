@@ -31,30 +31,35 @@ angular.module('linuxGraphApp').controller('HeaderCtrl', function($rootScope, $s
 		case 0:
 			$rootScope.$broadcast("UPDATE_TIME_PERIOD", {
 				live: true,
+				tickSize: [20, "second"],
 				timePeriod: [moment().subtract('minutes', 1).valueOf(), moment().valueOf()]
 			});
 			break;
 		case 1:
 			$rootScope.$broadcast("UPDATE_TIME_PERIOD", {
 				live: true,
+				tickSize: [1, "minute"],
 				timePeriod: [moment().subtract('minutes', 5).valueOf(), moment().valueOf()]
 			});
 			break;
 		case 2:
 			$rootScope.$broadcast("UPDATE_TIME_PERIOD", {
 				live: false,
+				tickSize: [5, "minute"],
 				timePeriod: [moment().subtract('minutes', 15).valueOf(), moment().valueOf()]
 			});
 			break;
 		case 3:
 			$rootScope.$broadcast("UPDATE_TIME_PERIOD", {
 				live: false,
+				tickSize: [10, "minute"],
 				timePeriod: [moment().subtract('minutes', 30).valueOf(), moment().valueOf()]
 			});
 			break;
 		case 4:
 			$rootScope.$broadcast("UPDATE_TIME_PERIOD", {
 				live: false,
+				tickSize: [20, "minute"],
 				timePeriod: [moment().subtract('hours', 1).valueOf(), moment().valueOf()]
 			});
 			break;

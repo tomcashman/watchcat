@@ -5,10 +5,7 @@
 				<h3 class="panel-title"><span class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;Load Average <span class="label label-info pull-right">{{cpuCores}} cores</span></h3>
 			</div>
 			<div class="panel-body">
-				<nvd3-line-chart data="loadAverage" showXAxis="true" objectEquality="true"
-					showYAxis="true" xAxisTickFormat="timeTickFormat()" noData="Retrieving..."
-					showLegend="true" interpolate="basis-open" interactive="false">
-				<svg></svg></nvd3-line-chart>
+				<flot dataset="loadAverage" options="flotOptions" />
 			</div>
 		</div>
 	</div>
@@ -18,10 +15,7 @@
 				<h3 class="panel-title"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;RAM Usage</h3>
 			</div>
 			<div class="panel-body">
-				<nvd3-line-chart data="ram" showXAxis="true" objectEquality="true"
-					showYAxis="true" xAxisTickFormat="timeTickFormat()" noData="Retrieving..."
-					showLegend="true" interpolate="basis-open" interactive="false">
-				<svg></svg></nvd3-line-chart>
+				<flot dataset="ram" options="flotOptions" />
 			</div>
 		</div>
 	</div>
@@ -31,10 +25,7 @@
 				<h3 class="panel-title"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;Swap Usage</h3>
 			</div>
 			<div class="panel-body">
-				<nvd3-line-chart data="swap" showXAxis="true" objectEquality="true"
-					showYAxis="true" xAxisTickFormat="timeTickFormat()" noData="Retrieving..."
-					showLegend="true" interpolate="basis-open" interactive="false">
-				<svg></svg></nvd3-line-chart>
+				<flot dataset="swap" options="flotOptions" />
 			</div>
 		</div>
 	</div>
@@ -46,10 +37,7 @@
 				<h3 class="panel-title"><i class="fa fa-exchange fa-fw"></i>&nbsp;&nbsp;Bandwidth Usage</h3>
 			</div>
 			<div class="panel-body">
-				<nvd3-line-chart data="bandwidth" showXAxis="true" objectEquality="true"
-					showYAxis="true" xAxisTickFormat="timeTickFormat()" noData="Retrieving..."
-					showLegend="true" interpolate="basis-open" interactive="false">
-				<svg></svg></nvd3-line-chart>
+				<flot dataset="bandwidth" options="flotOptions" />
 			</div>
 		</div>
 	</div>
@@ -59,10 +47,7 @@
 				<h3 class="panel-title"><span class="glyphicon glyphicon-import"></span>&nbsp;&nbsp;Network Connections</h3>
 			</div>
 			<div class="panel-body">
-				<nvd3-line-chart data="networkConnections" showXAxis="true" objectEquality="true"
-					showYAxis="true" xAxisTickFormat="timeTickFormat()" noData="Retrieving..."
-					showLegend="true" interpolate="basis-open" interactive="false">
-				<svg></svg></nvd3-line-chart>
+				<flot dataset="networkConnections" options="flotOptions" />
 			</div>
 		</div>
 	</div>
@@ -74,10 +59,7 @@
 				<h3 class="panel-title"><span class="glyphicon glyphicon-hdd"></span>&nbsp;&nbsp;<span bo-html="disk.mountPoint"></span> (<span bo-text="disk.filesystem"></span>)</h3>
 			</div>
 			<div class="panel-body">
-				<nvd3-line-chart data="disk.graph" showXAxis="true" objectEquality="true"
-					showYAxis="true" xAxisTickFormat="timeTickFormat()" noData="Retrieving..."
-					showLegend="true" interpolate="basis-open" interactive="false">
-				<svg></svg></nvd3-line-chart>
+				<flot dataset="disk.graph" options="flotOptions" />
 			</div>
 		</div>
 	</div>

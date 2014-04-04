@@ -78,7 +78,7 @@ public class Bandwidth implements Runnable {
 		return rxBytes.get();
 	}
 	
-	public XContentBuilder toJson(String timestamp) {
+	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
 			builder = builder.startObject();
