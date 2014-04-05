@@ -73,135 +73,80 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $route, 
 	
 	$scope.getLoadAverage = function(startTime, endTime, lastPollTime) {
 		Metrics.getLoadAverage($routeParams.host, startTime, endTime).then(function(response) {
-			if(lastPollTime === startTime) {
-				/* Push existing data to the left, dropping the item at index 0 */
-				for(var i = 1; i < $scope.loadAverage[0].data.length; i++) {
-					$scope.loadAverage[0].data[i - 1] = $scope.loadAverage[0].data[i];
-					$scope.loadAverage[1].data[i - 1] = $scope.loadAverage[1].data[i];
-					$scope.loadAverage[2].data[i - 1] = $scope.loadAverage[2].data[i];
-				}
+			for(var i = 0; i < response.aggregations.timestamps.buckets.length; i++) {
+				var bucket = response.aggregations.timestamps.buckets[i];
+				var timestamp = bucket.from;
+				if(i == response.aggregations.timestamps.buckets.length - 1)
+					timestamp = bucket.to;
 				
-				/* Insert new data */
-				var index = $scope.loadAverage[0].data.length - 1;
-				$scope.loadAverage[0].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.oneMinuteAverage
-				];
-				$scope.loadAverage[1].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.fiveMinuteAverage
-				];
-				$scope.loadAverage[2].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.fifteenMinuteAverage
-				];
-			} else {
-				for(var i = 0; i < response.hits.hits.length; i++) {
-					$scope.loadAverage[0].data.push([
-						                response.hits.hits[i]._source.timestamp,
-						                response.hits.hits[i]._source.oneMinuteAverage
-						                ]);
-					$scope.loadAverage[1].data.push([
-						                 response.hits.hits[i]._source.timestamp,
-						                 response.hits.hits[i]._source.fiveMinuteAverage
-						                 ]);
-					$scope.loadAverage[2].data.push([
-						                    response.hits.hits[i]._source.timestamp,
-						                    response.hits.hits[i]._source.fifteenMinuteAverage
-						                    ]);
-				}
-			}			
-			
-			if(response.hits.hits.length > 0) {
-				$scope.cpuCores = response.hits.hits[response.hits.hits.length - 1]._source.cpuCores;
+				if(!bucket.oneMinuteAverage.value)
+					continue;
+				
+				$scope.loadAverage[0].data.push([
+					                timestamp,
+					                bucket.oneMinuteAverage.value
+					                ]);
+				$scope.loadAverage[1].data.push([
+					                timestamp,
+					                bucket.fiveMinuteAverage.value
+					                 ]);
+				$scope.loadAverage[2].data.push([
+					                     timestamp,
+					                     bucket.fifteenMinuteAverage.value
+					                    ]);
+				$scope.cpuCores = bucket.cpuCores.value;
 			}
 		});
 	};
 	
 	$scope.getMemoryUsage = function(startTime, endTime, lastPollTime) {
 		Metrics.getMemoryUsage($routeParams.host, startTime, endTime).then(function(response) {
-			if(lastPollTime === startTime) {
-				/* Push existing data to the left, dropping the item at index 0 */
-				for(var i = 1; i < $scope.ram[0].data.length; i++) {
-					$scope.ram[0].data[i - 1] = $scope.ram[0].data[i];
-					$scope.ram[1].data[i - 1] = $scope.ram[1].data[i];
-					$scope.swap[0].data[i - 1] = $scope.swap[0].data[i];
-					$scope.swap[1].data[i - 1] = $scope.swap[1].data[i];
-				}
+			for(var i = 0; i < response.aggregations.timestamps.buckets.length; i++) {
+				var bucket = response.aggregations.timestamps.buckets[i];
+				var timestamp = bucket.from;
+				if(i == response.aggregations.timestamps.buckets.length - 1)
+					timestamp = bucket.to;
+				if(!bucket.totalMemory.value)
+					continue;
 				
-				/* Insert new data */
-				var index = $scope.ram[0].data.length - 1;
-
-				$scope.ram[0].data[index]= [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.totalMemory
-				];
-				$scope.ram[1].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.usedMemory
-				];
-				$scope.swap[0].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.totalSwap
-				];
-				$scope.swap[1].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.usedSwap
-				];
-			} else {
-				for(var i = 0; i < response.hits.hits.length; i++) {
-					$scope.ram[0].data.push([
-						response.hits.hits[i]._source.timestamp,
-						response.hits.hits[i]._source.totalMemory
-					]);
-					$scope.ram[1].data.push([
-						response.hits.hits[i]._source.timestamp,
-						response.hits.hits[i]._source.usedMemory
-					]);
-					$scope.swap[0].data.push([
-						response.hits.hits[i]._source.timestamp,
-						response.hits.hits[i]._source.totalSwap
-					]);
-					$scope.swap[1].data.push([
-						response.hits.hits[i]._source.timestamp,
-						response.hits.hits[i]._source.usedSwap
-					]);
-				}
+				$scope.ram[0].data.push([
+					timestamp,
+					bucket.totalMemory.value
+				]);
+				$scope.ram[1].data.push([
+					timestamp,
+					bucket.usedMemory.value
+				]);
+				$scope.swap[0].data.push([
+					timestamp,
+					bucket.totalSwap.value
+				]);
+				$scope.swap[1].data.push([
+					timestamp,
+					bucket.usedSwap.value
+				]);
 			}
 		});
 	};
 	
 	$scope.getBandwidth = function(startTime, endTime, lastPollTime) {
 		Metrics.getBandwidth($routeParams.host, startTime, endTime).then(function(response) {
-			if(lastPollTime === startTime) {
-				/* Push existing data to the left, dropping the item at index 0 */
-				for(var i = 1; i < $scope.bandwidth[0].data.length; i++) {
-					$scope.bandwidth[0].data[i - 1] = $scope.bandwidth[0].data[i];
-					$scope.bandwidth[1].data[i - 1] = $scope.bandwidth[1].data[i];
-				}
-
-				/* Insert new data */
-				var index = $scope.bandwidth[0].data.length - 1;
-
-				$scope.bandwidth[0].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.rx
-				];
-				$scope.bandwidth[1].data[index] = [
-					response.hits.hits[0]._source.timestamp,
-					response.hits.hits[0]._source.tx
-				];
-			} else {
-				for(var i = 0; i < response.hits.hits.length; i++) {
-					$scope.bandwidth[0].data.push([
-							                response.hits.hits[i]._source.timestamp,
-							                response.hits.hits[i]._source.rx
-							                ]);
-					$scope.bandwidth[1].data.push([
-							                response.hits.hits[i]._source.timestamp,
-							                response.hits.hits[i]._source.tx
-							                ]);
-				}
+			for(var i = 0; i < response.aggregations.timestamps.buckets.length; i++) {
+				var bucket = response.aggregations.timestamps.buckets[i];
+				var timestamp = bucket.from;
+				if(i == response.aggregations.timestamps.buckets.length - 1)
+					timestamp = bucket.to;
+				if(!bucket.rx.value)
+					continue;
+				
+				$scope.bandwidth[0].data.push([
+						                timestamp,
+						                bucket.rx.value
+						                ]);
+				$scope.bandwidth[1].data.push([
+						                timestamp,
+						                bucket.tx.value
+						                ]);
 			}
 		});
 	};

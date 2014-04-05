@@ -35,7 +35,7 @@ angular.module('linuxGraphApp').controller(
 				switch (timePeriod) {
 				case 0:
 					$rootScope.$broadcast("UPDATE_TIME_PERIOD", {
-						live : true,
+						live : false,
 						tickSize : [ 20, "second" ],
 						timePeriod : [
 								moment().subtract('minutes', 1).valueOf(),
@@ -44,7 +44,7 @@ angular.module('linuxGraphApp').controller(
 					break;
 				case 1:
 					$rootScope.$broadcast("UPDATE_TIME_PERIOD", {
-						live : true,
+						live : false,
 						tickSize : [ 1, "minute" ],
 						timePeriod : [
 								moment().subtract('minutes', 5).valueOf(),
