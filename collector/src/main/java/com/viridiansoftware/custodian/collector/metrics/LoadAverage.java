@@ -44,14 +44,14 @@ public class LoadAverage implements Runnable {
 	private AtomicDouble oneMinuteAverage;
 	private AtomicDouble fiveMinuteAverage;
 	private AtomicDouble fifteenMinuteAverage;
-	private AtomicReference<String> numberOfCpuCores;
+	private AtomicReference<Integer> numberOfCpuCores;
 	
 	public LoadAverage() {
 		numberOfCoresPrimaryCommand = new ShellCommand("/bin/grep -c ^processor /proc/cpuinfo");
 		numberOfCoresSecondaryCommand = new ShellCommand("/usr/bin/nproc");
 		loadAverageCommand = new ShellCommand("/bin/cat /proc/loadavg | /usr/bin/awk '{print $1\",\"$2\",\"$3}'");
 		
-		numberOfCpuCores = new AtomicReference<String>();
+		numberOfCpuCores = new AtomicReference<Integer>();
 		oneMinuteAverage = new AtomicDouble();
 		fiveMinuteAverage = new AtomicDouble();
 		fifteenMinuteAverage = new AtomicDouble();
@@ -66,7 +66,7 @@ public class LoadAverage implements Runnable {
 				numberOfCoresResult = "Unknown";
 			}
 		}
-		numberOfCpuCores.set(numberOfCoresResult.replace("\n", ""));
+		numberOfCpuCores.set(Integer.parseInt(numberOfCoresResult.replace("\n", "")));
 		
 		String [] loadAverages = loadAverageCommand.execute().split(",");
 		oneMinuteAverage.set(Double.parseDouble(loadAverages[0]));
@@ -74,7 +74,7 @@ public class LoadAverage implements Runnable {
 		fifteenMinuteAverage.set(Double.parseDouble(loadAverages[2]));
 	}
 	
-	public String getNumberOfCpuCores() {
+	public int getNumberOfCpuCores() {
 		return numberOfCpuCores.get();
 	}
 
