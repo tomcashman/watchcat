@@ -17,7 +17,8 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $route, 
 				mode: "x"
 			},
 			legend: {
-				position: "nw"
+				show: true,
+				noColumns: 5
 			}
 	};
 	

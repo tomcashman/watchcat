@@ -7,6 +7,18 @@ flot > div {
 	height: 160px;
 }
 
+.legendContainer {
+	position: relative;
+	display: block;
+}
+
+.legendContainer table {
+	position: relative !important;
+	top: 0 !important;
+	right: 0 !important;
+	display: block;	
+}
+
 .btn-default,
 .btn-primary,
 .btn-success,
