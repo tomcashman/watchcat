@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('linuxGraphApp',
-		[ 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'angular-flot', 'elasticsearch', 'pasvaz.bindonce']).config(
+		[ 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'angular-flot', 'elasticsearch', 'pasvaz.bindonce', 'ui.bootstrap.datetimepicker']).config(
 		function($routeProvider) {
 			$routeProvider.when('/:host', {
 				templateUrl : 'views/host.html',

@@ -17,8 +17,10 @@
 				data-toggle="dropdown">{{timePeriods[selectedTimePeriod]}} <b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					<li data-ng-repeat="timePeriod in timePeriods track by $index"
-						bo-class="{'active' : $index == selectedTimePeriod}"><a
-						ng-click="timePeriodClicked($index)">{{timePeriod}}</a></li>
+						bo-class="{'active' : $index == selectedTimePeriod}">
+						<a ng-click="timePeriodClicked($index)" ng-show="$index < timePeriods.length - 1">{{timePeriod}}</a>
+						<a ng-click="openCustomDateDialog()" ng-hide="$index < timePeriods.length - 1">Custom</a>
+					</li>
 				</ul></li>
 			<li class="dropdown" ng-show="hosts.length > 0"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown">{{currentHost}} <b class="caret"></b></a>
@@ -34,3 +36,25 @@
 	<!-- /.navbar-collapse -->
 </div>
 <!-- /.container-fluid -->
+
+<script type="text/ng-template" id="customdate.html">
+		<div class="modal-header">
+			<h3>Custom Time Range</h3>
+		</div>
+        <div class="modal-body">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+					<h4>From</h4>
+					<datetimepicker ng-model="startDate" startView="'minute'" data-on-set-time="onStartDateSet"></datetimepicker>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+					<h4>To</h4>
+					<datetimepicker ng-model="endDate" startView="'minute'" data-on-set-time="onEndDateSet">></datetimepicker>
+				</div>
+			</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" ng-click="ok()" ng-disabled="invalidDates()">OK</button>
+            <button class="btn btn-error" ng-click="cancel()">Cancel</button>
+        </div>
+</script>
