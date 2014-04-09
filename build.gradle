@@ -8,7 +8,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.0.RC4")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.1.RELEASE")
     }
 }
 
@@ -39,7 +39,7 @@ project(":" + rootProject.name + "-collector") {
 	apply plugin: 'spring-boot'
 
 	dependencies {
-		compile 'org.springframework.boot:spring-boot-starter:1.0.0.RC4'
+		compile 'org.springframework.boot:spring-boot-starter:1.0.1.RELEASE'
 		compile 'org.elasticsearch:elasticsearch:1.1.0'
 		
 		testCompile 'junit:junit:4.11'
