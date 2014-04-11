@@ -1,4 +1,6 @@
-angular.module('linuxGraphApp').directive('flotLegend', function() {
+'use strict';
+
+angular.module('watchcatApp').directive('flotLegend', function() {
 	return {
 		restrict : 'E',
 		template : '<div></div>',

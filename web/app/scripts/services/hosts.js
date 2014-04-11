@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('linuxGraphApp').factory('Hosts',
+angular.module('watchcatApp').factory('Hosts',
 		[ "ElasticSearch", function(ElasticSearch) {
 			return {
 				list : function() {
 					return ElasticSearch.search({
-						index : 'custodian',
+						index : 'watchcat',
 						type : 'host',
 						size : 500,
 						body : {

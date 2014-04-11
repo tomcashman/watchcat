@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $route, $routeParams, $interval, $window, Metrics) {
+angular.module('watchcatApp').controller('HostCtrl', function($scope, $route, $routeParams, $interval, $window, Metrics) {
 	$scope.flotOptions = {
 			series: {
 				shadowSize: 0,	// Drawing is faster without shadows
@@ -62,7 +62,10 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $route, 
 			data: []
 		}];
 		
-		$scope.networkConnections = [];
+		$scope.networkConnections = [{
+			label: 'Total',
+			data: []
+		}];
 		$scope.disks = [];
 		$scope.processes = [];
 	};
@@ -215,54 +218,13 @@ angular.module('linuxGraphApp').controller('HostCtrl', function($scope, $route, 
 	
 	$scope.getNetworkConnections = function(startTime, endTime, lastPollTime) {
 		Metrics.getNetworkConnections($routeParams.host, startTime, endTime).then(function(response) {
-			if(startTime === lastPollTime) {
-				for(var i = $scope.networkConnections.length - 1; i >= 0; i--) {
-					var stillExists = false;
-					for(var j = 0; j < response.hits.hits[0]._source.connections.length; j++) {
-						if(response.hits.hits[0]._source.connections[j].address === $scope.networkConnections[i].label) {
-							stillExists = true;
-							break;
-						}
-					}
-
-					if(stillExists) {
-						for(var l = 1; l < $scope.networkConnections[i].data.length; l++) {
-							$scope.networkConnections[i].data[l - 1] = $scope.networkConnections[i].data[l];
-						}
-					} else {
-						$scope.networkConnections.splice(i, 1);
-					}
-				}
-			}
-
-			for(var i = 0; i < response.hits.hits.length; i++) {
-				var timestamp = response.hits.hits[i]._source.timestamp;
-				for(var j = 0; j < response.hits.hits[i]._source.connections.length; j++) {
-					var address = response.hits.hits[i]._source.connections[j].address;
-					var totalConnections = response.hits.hits[i]._source.connections[j].total;
-					var addressIndex = -1;
-					
-					for(var k = 0; k < $scope.networkConnections.length; k++) {
-						if($scope.networkConnections[k].label === address) {
-							addressIndex = k;
-							break;
-						}
-					}
-					
-					if(addressIndex < 0) {
-						$scope.networkConnections.push({
-							label: address,
-							data: [[timestamp, totalConnections]]
-						});
-					} else {
-						if(startTime === lastPollTime) {
-							var index = $scope.networkConnections[addressIndex].data.length - 1;
-							$scope.networkConnections[addressIndex].data[index] = [timestamp, totalConnections];
-						} else {
-							$scope.networkConnections[addressIndex].data.push([timestamp, totalConnections]);
-						}
-					}
-				}
+			for(var i = 0; i < response.aggregations.timestamps.buckets.length; i++) {
+				var bucket = response.aggregations.timestamps.buckets[i];
+				var timestamp = bucket.from;
+				if(i == response.aggregations.timestamps.buckets.length - 1)
+					timestamp = bucket.to;
+				
+				$scope.networkConnections[0].data.push([timestamp,  bucket.total.value]);
 			}
 		});
 	};

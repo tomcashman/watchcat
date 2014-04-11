@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('linuxGraphApp').controller('MainCtrl', function($scope, $location, Hosts) {
+angular.module('watchcatApp').controller('MainCtrl', function($scope, $location, Hosts) {
 	$scope.online = true;
 	
 	Hosts.list().then(function(response) {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('linuxGraphApp',
+angular.module('watchcatApp',
 		[ 'ngCookies', 'ngResource', 'ngSanitize', 'ngRoute', 'ui.bootstrap', 'angular-flot', 'elasticsearch', 'pasvaz.bindonce', 'ui.bootstrap.datetimepicker']).config(
 		function($routeProvider) {
 			$routeProvider.when('/:host', {

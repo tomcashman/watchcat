@@ -7,7 +7,7 @@
 			<span class="icon-bar"></span> <span class="icon-bar"></span>
 		</button>
 		<a class="navbar-brand" href="#"><i class="fa fa-tachometer fa-fw"></i>
-			custodian</a>
+			watchcat</a>
 	</div>
 
 	<!-- Collect the nav links, forms, and other content for toggling -->
@@ -16,8 +16,7 @@
 		<li class="dropdown" ng-show="hosts.length > 0"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown">{{timePeriods[selectedTimePeriod]}} <b class="caret"></b></a>
 				<ul class="dropdown-menu">
-					<li data-ng-repeat="timePeriod in timePeriods track by $index"
-						bo-class="{'active' : $index == selectedTimePeriod}">
+					<li data-ng-repeat="timePeriod in timePeriods track by $index">
 						<a ng-click="timePeriodClicked($index)" ng-show="$index < timePeriods.length - 1">{{timePeriod}}</a>
 						<a ng-click="openCustomDateDialog()" ng-hide="$index < timePeriods.length - 1">Custom</a>
 					</li>
@@ -25,8 +24,7 @@
 			<li class="dropdown" ng-show="hosts.length > 0"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown">{{currentHost}} <b class="caret"></b></a>
 				<ul class="dropdown-menu">
-					<li data-ng-repeat="host in hosts"
-						ng-class="{'active' : host == currentHost}"><a
+					<li data-ng-repeat="host in hosts"><a
 						href="#/{{host}}">{{host}}</a></li>
 				</ul></li>
 			<li><a href="https://github.com/tomcashman/linux-graph"><i

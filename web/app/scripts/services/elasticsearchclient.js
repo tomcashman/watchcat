@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('linuxGraphApp').service('ElasticSearch', function(esFactory) {
+angular.module('watchcatApp').service('ElasticSearch', function(esFactory) {
 	return esFactory({
 		hosts : Configuration.elasticsearchnodes,
 		maxKeepAliveTime : 3600000,

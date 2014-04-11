@@ -1,5 +1,5 @@
 {
-  "name": "linux-graph",
+  "name": "watchcat",
   "version": "1.0.0",
   "dependencies": {
     "angular": "1.2.11",
@@ -16,7 +16,7 @@
     "momentjs": "~2.5.1",
     "angular-bindonce": "0.3.1",
     "flot": "0.8.2",
-    "angular-flot": "0.0.1",
+    "angular-flot": "0.0.2",
     "angular-bootstrap-datetimepicker": "0.2.2"
   },
   "devDependencies": {

@@ -18,7 +18,7 @@ subprojects {
 	apply plugin: 'maven'
 
 	version = "1.0.0-SNAPSHOT"
-	group = "com.viridiansoftware.custodian"
+	group = "com.viridiansoftware.watchcat"
 	
 	uploadArchives {
 		repositories {
@@ -35,7 +35,7 @@ subprojects {
 	}
 }
 
-project(":" + rootProject.name + "-collector") {
+project(":" + rootProject.name + "-node") {
 	apply plugin: 'spring-boot'
 
 	dependencies {
@@ -43,12 +43,12 @@ project(":" + rootProject.name + "-collector") {
 		compile 'org.elasticsearch:elasticsearch:1.1.0'
 		
 		testCompile 'junit:junit:4.11'
-        testCompile 'org.jmock:jmock-legacy:2.6.0'
-        testCompile 'org.jmock:jmock-junit4:2.6.0'
+        	testCompile 'org.jmock:jmock-legacy:2.6.0'
+        	testCompile 'org.jmock:jmock-junit4:2.6.0'
 	}
 	
 	jar {
-    	baseName = 'custodian-collector'
+    		baseName = 'watchcat-node'
 	}
 	
 	task createDeb(type: Exec) {
@@ -58,14 +58,14 @@ project(":" + rootProject.name + "-collector") {
 			"fpm",
 			"-s","dir",
 			"-t","deb",
-			"--name","custodian-collector",
-			"--description","Custodian Metrics Collector",
+			"--name","watchcat-node",
+			"--description","watchcat node",
 			"--depends","oracle-java7-installer",
 			"--vendor","Viridian Software",
 			"--maintainer","Support Staff<support@viridiansoftware.com>",
 			"--version",version,
-			"--url","custodian.viridiansoftware.com",
-			"--prefix","usr/share/viridiansoftware/install/custodian-collector",
+			"--url","watchcat.viridiansoftware.com",
+			"--prefix","usr/share/viridiansoftware/install/watchcat-node",
 			"--inputs","fpm/config/package-inputs",
 			"--force",
 			"--before-install","fpm/scripts/before-install.sh",

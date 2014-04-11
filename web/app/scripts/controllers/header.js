@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('linuxGraphApp').controller(
+angular.module('watchcatApp').controller(
 		'HeaderCtrl',
 		function($rootScope, $scope, $routeParams, $modal, Hosts) {
 			$scope.currentHost = "";

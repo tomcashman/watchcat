@@ -1,40 +1,34 @@
 'use strict';
 
-var calculateRanges = function(startTime, endTime) {	
+var getRangeInterval = function(startTime, endTime) {
 	var diff = endTime - startTime;
 	var interval = 1000;
 	
-	if(diff <= 120000) {
-		interval = 1000;
-	} else if(diff <= 600001) {
-		interval = 10000;
-	}else if(diff <= 1800001) {
-		interval = 30000;
-	} else if(diff <= 3600001) {
-		interval = 60000;
+	if(diff >= 120000) {
+		interval = (diff / 60000) * interval;
+	}
+	return interval;
+};
+
+var calculateRanges = function(startTime, endTime, intervalValue) {
+	var interval = null;
+	if(!intervalValue) {
+		interval = getRangeInterval(startTime, endTime);
+	} else {
+		interval = intervalValue;
 	}
 	
 	var result = [];
 	for(var i = startTime; i <= endTime; i += interval) {
-		if(i === startTime) {
-			result.push({
-				"from": i
-			});
-		} else if(i === endTime) {
-			result.push({
-				"to": i - 1
-			});
-		} else {
-			result.push({
-				"from": i,
-				"to": i + interval - 1
-			});
-		}
+		result.push({
+			"from": i,
+			"to": i + interval - 1
+		});
 	}
 	return result;
 };
 
-angular.module('linuxGraphApp').factory('Metrics',
+angular.module('watchcatApp').factory('Metrics',
 		[ "ElasticSearch", function(ElasticSearch) {
 			return {
 				getLoadAverage : function(host, startTime, endTime) {
@@ -207,7 +201,7 @@ angular.module('linuxGraphApp').factory('Metrics',
 							query : {
 								"range" : {
 							        "timestamp" : {
-							            "gte" : startTime,
+							            "gte" : endTime - getRangeInterval(startTime, endTime),
 							            "lte" : endTime,
 							            "boost" : 2.0
 							        }
@@ -217,14 +211,12 @@ angular.module('linuxGraphApp').factory('Metrics',
 					});
 				},
 				getNetworkConnections : function(host, startTime, endTime) {
+					var ranges = calculateRanges(startTime, endTime);
 					return ElasticSearch.search({
 						index : host,
 						type : 'connections',
-						size : Math.round(((endTime - startTime)/ 1000) + 1),
+						size : 0,
 						body : {
-							sort : [ {
-								"timestamp" : "asc"
-							}, "_score" ],
 							query : {
 								"range" : {
 							        "timestamp" : {
@@ -233,7 +225,22 @@ angular.module('linuxGraphApp').factory('Metrics',
 							            "boost" : 2.0
 							        }
 							    }
-							}
+							},
+							aggregations : {
+						        "timestamps" : {
+						        	"range" : {
+						                "field" : "timestamp",
+						                "ranges" : ranges
+						            },
+						            "aggregations" : {
+						            	"total" : {
+				                    		"sum" : {
+					                            "field" : "totalConnections"
+					                        }
+				                    	}
+						            }
+						        }
+						    }
 						}
 					});
 				}
