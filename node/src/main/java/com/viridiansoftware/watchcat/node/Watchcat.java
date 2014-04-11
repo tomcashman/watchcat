@@ -23,6 +23,7 @@
  */
 package com.viridiansoftware.watchcat.node;
 
+import java.net.InetAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -32,8 +33,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+
+import com.viridiansoftware.watchcat.node.util.ShellCommand;
 
 /**
  * Main application entry point
@@ -61,6 +65,21 @@ public class Watchcat {
 			scheduledExecutorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 		}
 		return scheduledExecutorService;
+	}
+	
+	@Bean
+	public String hostname() {
+		ShellCommand getHostname = new ShellCommand("cat /etc/hostname");
+		String hostname = getHostname.execute().replace("\n", "");
+
+		if (hostname == null || hostname.length() == 0) {
+			try {
+				hostname = InetAddress.getLocalHost().getHostName();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return hostname;
 	}
 	
 	@PreDestroy

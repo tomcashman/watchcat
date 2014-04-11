@@ -21,40 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.watchcat.node.monitoring;
+package com.viridiansoftware.watchcat.node.monitoring.threshold;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.viridiansoftware.watchcat.node.metrics.reporting.LinuxMetricsCollector;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.BandwidthThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.DiskUsageThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.LoadAverageThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.MemoryUsageThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.NetworkConnectionsThresholds;
-
 /**
- * Monitors a {@link LinuxMetricsCollector} instance for alert threshold
- * breaches. When a breach occurs, an email is sent to the configured addresses.
+ * Polls the alert threshold settings from ElasticSearch
  *
  * @author Thomas Cashman
  */
 @Component
-public class LinuxMetricsMonitor implements Runnable {
+public class ThresholdPoller implements Runnable {
+	private static String WATCHCAT_INDEX = "watchcat";
+	private static String THRESHOLD_TYPE = "thresholds";
+	private static String BANDWIDTH_ID = "bandwidth";
+	private static String FILESYSTEMS_ID = "filesystems";
+	private static String LOAD_AVERAGE_ID = "loadaverage";
+	private static String MEMORY_USAGE_ID = "memoryusage";
+	private static String NETWORK_CONNECTIONS_ID = "connections";
+	
 	@Autowired
-	private LinuxMetricsCollector metricsCollector;
+	private TransportClient transportClient;
 	@Autowired
 	private ScheduledExecutorService scheduledExecutorService;
-
+	
 	@Autowired
 	private BandwidthThresholds bandwidthThresholds;
 	@Autowired
-	private DiskUsageThresholds diskUsageThresholds;
+	private FilesystemThresholds diskUsageThresholds;
 	@Autowired
 	private LoadAverageThresholds loadAverageThresholds;
 	@Autowired
@@ -64,12 +65,15 @@ public class LinuxMetricsMonitor implements Runnable {
 
 	@PostConstruct
 	public void postConstruct() {
-		scheduledExecutorService.scheduleAtFixedRate(this, 6000, 1000,
+		scheduledExecutorService.scheduleAtFixedRate(this, 5000, 10000,
 				TimeUnit.MILLISECONDS);
 	}
-
+	
 	@Override
 	public void run() {
-		long timestamp = System.currentTimeMillis();
+	}
+	
+	private void pollLoadAverageThresholds() {
+		
 	}
 }

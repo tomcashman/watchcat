@@ -21,19 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.watchcat.node.event.bandwidth;
-
-import com.viridiansoftware.watchcat.node.event.Event;
+package com.viridiansoftware.watchcat.node.event;
 
 /**
- *
+ * A simple {@link Event} that begins and ends
  *
  * @author Thomas Cashman
  */
-public abstract class BandwidthEvent {
-
-	public BandwidthEvent(boolean rx, long threshold, long currentValue) {
-		
-	}
-
+public interface StatusEvent extends Event {
+	/**
+	 * Begin the event
+	 */
+	public void begin(String... eventParams);
+	
+	/**
+	 * End the event
+	 */
+	public void end(String... eventParams);
 }

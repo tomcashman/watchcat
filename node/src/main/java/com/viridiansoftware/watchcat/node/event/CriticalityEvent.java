@@ -21,38 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.watchcat.node.monitoring;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.viridiansoftware.watchcat.node.monitoring.threshold.BandwidthThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.DiskUsageThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.LoadAverageThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.MemoryUsageThresholds;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.NetworkConnectionsThresholds;
+package com.viridiansoftware.watchcat.node.event;
 
 /**
- * Polls the alert threshold settings from ElasticSearch
+ * {@link Event}s that have an associated tier of {@link Criticality}
  *
  * @author Thomas Cashman
  */
-@Component
-public class ThresholdPoller implements Runnable {
-	@Autowired
-	private BandwidthThresholds bandwidthThresholds;
-	@Autowired
-	private DiskUsageThresholds diskUsageThresholds;
-	@Autowired
-	private LoadAverageThresholds loadAverageThresholds;
-	@Autowired
-	private MemoryUsageThresholds memoryUsageThresholds;
-	@Autowired
-	private NetworkConnectionsThresholds networkConnectionsThresholds;
+public interface CriticalityEvent extends Event {
+	/**
+	 * Begin the event
+	 */
+	public void begin(Criticality criticality, String... eventParams);
+	
+	/**
+	 * End the event
+	 */
+	public void end(String... eventParams);
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * Updates the criticality of this {@link Event}
+	 */
+	public void updateStatus(Criticality criticality, String... eventParams);
 }

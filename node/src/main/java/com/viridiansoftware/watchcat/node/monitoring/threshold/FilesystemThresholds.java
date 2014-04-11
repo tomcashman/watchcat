@@ -23,31 +23,50 @@
  */
 package com.viridiansoftware.watchcat.node.monitoring.threshold;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.stereotype.Component;
 
-import com.viridiansoftware.watchcat.node.metrics.DiskUsage;
+import com.viridiansoftware.watchcat.node.metrics.domain.Filesystem;
 
 /**
- * Stores alert thresholds for {@link DiskUsage}
+ * Stores alert thresholds for {@link Filesystem}s
  *
  * @author Thomas Cashman
  */
 @Component
-public class DiskUsageThresholds {
-	private Map<String, Integer> filesystemThresholds;
+public class FilesystemThresholds {
+	private AtomicInteger minorThreshold;
+	private AtomicInteger majorThreshold;
+	private AtomicInteger criticalThreshold;
 	
-	public DiskUsageThresholds() {
-		filesystemThresholds = new ConcurrentHashMap<String, Integer>();
+	public FilesystemThresholds() {
+		minorThreshold = new AtomicInteger(100);
+		majorThreshold = new AtomicInteger(100);
+		criticalThreshold = new AtomicInteger(100);
 	}
-	
-	public int getFilesystemUsageThreshold(String filesystem) {
-		return filesystemThresholds.get(filesystem);
+
+	public int getMinorThreshold() {
+		return minorThreshold.get();
 	}
-	
-	public void setFilesystemUsageThreshold(String filesystem, int threshold) {
-		filesystemThresholds.put(filesystem, threshold);
+
+	public void setMinorThreshold(int minorThreshold) {
+		this.minorThreshold.set(minorThreshold);
+	}
+
+	public int getMajorThreshold() {
+		return majorThreshold.get();
+	}
+
+	public void setMajorThreshold(int majorThreshold) {
+		this.majorThreshold.set(majorThreshold);
+	}
+
+	public int getCriticalThreshold() {
+		return criticalThreshold.get();
+	}
+
+	public void setCriticalThreshold(int criticalThreshold) {
+		this.criticalThreshold.set(criticalThreshold);
 	}
 }

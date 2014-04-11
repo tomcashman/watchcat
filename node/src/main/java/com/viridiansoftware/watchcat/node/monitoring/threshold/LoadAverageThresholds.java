@@ -35,33 +35,102 @@ import com.viridiansoftware.watchcat.node.metrics.LoadAverage;
  */
 @Component
 public class LoadAverageThresholds {
-	private AtomicDouble oneMinuteAverageThreshold;
-	private AtomicDouble fiveMinuteAverageThreshold;
-	private AtomicDouble fifteenMinuteAverageThreshold;
-	
-	public double getOneMinuteAverageThreshold() {
-		return oneMinuteAverageThreshold.get();
+	private AtomicDouble oneMinuteAverageMinorThreshold, oneMinuteAverageMajorThreshold, oneMinuteAverageCriticalThreshold;
+	private AtomicDouble fiveMinuteAverageMinorThreshold, fiveMinuteAverageMajorThreshold, fiveMinuteAverageCriticalThreshold;
+	private AtomicDouble fifteenMinuteAverageMinorThreshold, fifteenMinuteAverageMajorThreshold, fifteenMinuteAverageCriticalThreshold;
+
+	public LoadAverageThresholds() {
+		oneMinuteAverageCriticalThreshold = new AtomicDouble(Double.MAX_VALUE);
+		oneMinuteAverageMajorThreshold = new AtomicDouble(Double.MAX_VALUE);
+		oneMinuteAverageMinorThreshold = new AtomicDouble(Double.MAX_VALUE);
+		
+		fiveMinuteAverageCriticalThreshold = new AtomicDouble(Double.MAX_VALUE);
+		fiveMinuteAverageMajorThreshold = new AtomicDouble(Double.MAX_VALUE);
+		fiveMinuteAverageMinorThreshold = new AtomicDouble(Double.MAX_VALUE);
+		
+		fifteenMinuteAverageCriticalThreshold = new AtomicDouble(Double.MAX_VALUE);
+		fifteenMinuteAverageMajorThreshold = new AtomicDouble(Double.MAX_VALUE);
+		fifteenMinuteAverageMinorThreshold = new AtomicDouble(Double.MAX_VALUE);
 	}
 	
-	public void setOneMinuteAverageThreshold(double oneMinuteAverageThreshold) {
-		this.oneMinuteAverageThreshold.set(oneMinuteAverageThreshold);
+	public double getOneMinuteAverageMinorThreshold() {
+		return oneMinuteAverageMinorThreshold.get();
 	}
-	
-	public double getFiveMinuteAverageThreshold() {
-		return fiveMinuteAverageThreshold.get();
+
+	public void setOneMinuteAverageMinorThreshold(
+			double oneMinuteAverageMinorThreshold) {
+		this.oneMinuteAverageMinorThreshold.set(oneMinuteAverageMinorThreshold);
 	}
-	
-	public void setFiveMinuteAverageThreshold(
-			double fiveMinuteAverageThreshold) {
-		this.fiveMinuteAverageThreshold.set(fiveMinuteAverageThreshold);
+
+	public double getOneMinuteAverageMajorThreshold() {
+		return oneMinuteAverageMajorThreshold.get();
 	}
-	
-	public double getFifteenMinuteAverageThreshold() {
-		return fifteenMinuteAverageThreshold.get();
+
+	public void setOneMinuteAverageMajorThreshold(
+			double oneMinuteAverageMajorThreshold) {
+		this.oneMinuteAverageMajorThreshold.set(oneMinuteAverageMajorThreshold);
 	}
-	
-	public void setFifteenMinuteAverageThreshold(
-			double fifteenMinuteAverageThreshold) {
-		this.fifteenMinuteAverageThreshold.set(fifteenMinuteAverageThreshold);
+
+	public double getOneMinuteAverageCriticalThreshold() {
+		return oneMinuteAverageCriticalThreshold.get();
+	}
+
+	public void setOneMinuteAverageCriticalThreshold(
+			double oneMinuteAverageCriticalThreshold) {
+		this.oneMinuteAverageCriticalThreshold.set(oneMinuteAverageCriticalThreshold);
+	}
+
+	public double getFiveMinuteAverageMinorThreshold() {
+		return fiveMinuteAverageMinorThreshold.get();
+	}
+
+	public void setFiveMinuteAverageMinorThreshold(
+			double fiveMinuteAverageMinorThreshold) {
+		this.fiveMinuteAverageMinorThreshold.set(fiveMinuteAverageMinorThreshold);
+	}
+
+	public double getFiveMinuteAverageMajorThreshold() {
+		return fiveMinuteAverageMajorThreshold.get();
+	}
+
+	public void setFiveMinuteAverageMajorThreshold(
+			double fiveMinuteAverageMajorThreshold) {
+		this.fiveMinuteAverageMajorThreshold.set(fiveMinuteAverageMajorThreshold);
+	}
+
+	public double getFiveMinuteAverageCriticalThreshold() {
+		return fiveMinuteAverageCriticalThreshold.get();
+	}
+
+	public void setFiveMinuteAverageCriticalThreshold(
+			double fiveMinuteAverageCriticalThreshold) {
+		this.fiveMinuteAverageCriticalThreshold.set(fiveMinuteAverageCriticalThreshold);
+	}
+
+	public double getFifteenMinuteAverageMinorThreshold() {
+		return fifteenMinuteAverageMinorThreshold.get();
+	}
+
+	public void setFifteenMinuteAverageMinorThreshold(
+			double fifteenMinuteAverageMinorThreshold) {
+		this.fifteenMinuteAverageMinorThreshold.set(fifteenMinuteAverageMinorThreshold);
+	}
+
+	public double getFifteenMinuteAverageMajorThreshold() {
+		return fifteenMinuteAverageMajorThreshold.get();
+	}
+
+	public void setFifteenMinuteAverageMajorThreshold(
+			double fifteenMinuteAverageMajorThreshold) {
+		this.fifteenMinuteAverageMajorThreshold.set(fifteenMinuteAverageMajorThreshold);
+	}
+
+	public double getFifteenMinuteAverageCriticalThreshold() {
+		return fifteenMinuteAverageCriticalThreshold.get();
+	}
+
+	public void setFifteenMinuteAverageCriticalThreshold(
+			double fifteenMinuteAverageCriticalThreshold) {
+		this.fifteenMinuteAverageCriticalThreshold.set(fifteenMinuteAverageCriticalThreshold);
 	}
 }

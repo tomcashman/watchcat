@@ -23,21 +23,30 @@
  */
 package com.viridiansoftware.watchcat.node.event.networkconnections;
 
-import com.viridiansoftware.watchcat.node.event.Event;
+import com.viridiansoftware.watchcat.node.event.StatusEvent;
 
 /**
  *
  *
  * @author Thomas Cashman
  */
-public class NetworkConnectionsEvent implements Event {
+public class NetworkConnectionsEvent implements StatusEvent {
+
 	@Override
-	public void begin() {
+	public void begin(String... eventParams) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void end() {
+	public void end(String... eventParams) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendAlert() {
+		// TODO Auto-generated method stub
 		
 	}
 }

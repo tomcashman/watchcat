@@ -23,7 +23,8 @@
  */
 package com.viridiansoftware.watchcat.node.event.memoryusage;
 
-import com.viridiansoftware.watchcat.node.event.Event;
+import com.viridiansoftware.watchcat.node.event.Criticality;
+import com.viridiansoftware.watchcat.node.event.CriticalityEvent;
 
 
 /**
@@ -31,14 +32,29 @@ import com.viridiansoftware.watchcat.node.event.Event;
  *
  * @author Thomas Cashman
  */
-public class MemoryUsageEvent implements Event {
+public class MemoryUsageEvent implements CriticalityEvent {
+
 	@Override
-	public void begin() {
+	public void begin(Criticality criticality, String... eventParams) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void end() {
+	public void end(String... eventParams) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateStatus(Criticality criticality, String... eventParams) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendAlert() {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -23,31 +23,21 @@
  */
 package com.viridiansoftware.watchcat.node.metrics.reporting;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import com.viridiansoftware.watchcat.node.util.ShellCommand;
 
 /**
  * Inserts the current metrics every second into ElasticSearch
@@ -61,33 +51,17 @@ public class ElasticSearchReporter implements Runnable {
 
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
-	@Value("${cluster.name}")
-	private String clusterName;
-	@Value("${cluster.nodes}")
-	private String clusterNodes;
 	@Autowired
 	private ScheduledExecutorService scheduledExecutorService;
-
-	private String hostname;
+	@Autowired
 	private TransportClient transportClient;
-
-	public ElasticSearchReporter() {
-		ShellCommand getHostname = new ShellCommand("cat /etc/hostname");
-		hostname = getHostname.execute().replace("\n", "");
-
-		if (hostname == null || hostname.length() == 0) {
-			try {
-				hostname = InetAddress.getLocalHost().getHostName();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+	@Autowired
+    @Qualifier("hostname")
+	private String hostname;
 
 	@PostConstruct
 	public void postConstruct() {
 		try {
-			buildElasticSearchClient();
 			registerHostInLinuxGraphIndex();
 			setupIndexes();
 		} catch (Exception e) {
@@ -102,40 +76,6 @@ public class ElasticSearchReporter implements Runnable {
 		if(transportClient.connectedNodes().size() > 0) {
 			refreshIndex();
 			transportClient.close();
-		}
-	}
-
-	private void buildElasticSearchClient() throws IOException {
-		Builder settingsBuilder = ImmutableSettings.settingsBuilder();
-
-		settingsBuilder = settingsBuilder.put("cluster.name", clusterName);
-		Settings settings = settingsBuilder.build();
-
-		transportClient = new TransportClient(settings);
-		if (clusterNodes != null && clusterNodes.length() > 0) {
-			String[] nodes = clusterNodes.split(",");
-			for (int i = 0; i < nodes.length; i++) {
-				String[] address = nodes[i].split(":");
-				if (address.length < 2) {
-					transportClient = transportClient
-							.addTransportAddress(new InetSocketTransportAddress(
-									address[0], 9300));
-				} else {
-					transportClient = transportClient
-							.addTransportAddress(new InetSocketTransportAddress(
-									address[0], Integer.parseInt(address[1])));
-				}
-			}
-		} else {
-			transportClient = transportClient
-					.addTransportAddress(new InetSocketTransportAddress(
-							"localhost", 9300));
-		}
-		try {
-			Thread.sleep(1000);
-		} catch (Exception e) {}
-		if(transportClient.connectedNodes().size() == 0) {
-			throw new IOException("No nodes available");
 		}
 	}
 
