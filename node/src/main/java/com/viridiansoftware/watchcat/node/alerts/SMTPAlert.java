@@ -23,16 +23,67 @@
  */
 package com.viridiansoftware.watchcat.node.alerts;
 
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 /**
  * Common interface for SMTP-based alerts
  * 
  * @author Thomas Cashman
  */
-public interface SMTPAlert {
+public class SMTPAlert {
+	private String hostname;
+	private String message;
+	private Properties smtpHostProperties;
+	private String smtpUsername;
+	private String smtpPassword;
+
+	public SMTPAlert(Properties smtpHostProperties, String smtpUsername,
+			String smtpPassword, String hostname, String message) {
+		this.hostname = hostname;
+		this.message = message;
+
+		this.smtpHostProperties = smtpHostProperties;
+		this.smtpUsername = smtpUsername;
+		this.smtpPassword = smtpPassword;
+	}
+
 	/**
-	 * Sends the alert
-	 * @param emailAddress The email address which should receive the alert
+	 * Sends the alert to an email address
+	 * 
+	 * @param emailAddress
+	 *            The email address which should receive the alert
 	 * @return True on success
 	 */
-	public boolean send(String emailAddress);
+	public boolean send(String emailAddress) {
+		try {
+			Session session = Session.getInstance(smtpHostProperties,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(smtpUsername,
+									smtpPassword);
+						}
+					});
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("from-email@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(emailAddress));
+			message.setSubject("watchcat [" + hostname + "] " + this.message);
+			message.setText("[" + hostname + "] " + this.message);
+
+			Transport.send(message);
+			return true;
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

@@ -47,13 +47,13 @@ public class DiskUsageEvent implements CriticalityEvent {
 	public void begin(Criticality criticality, String... eventParams) {
 		this.criticality = criticality;
 		this.percentageUsed = eventParams[0];
-		sendAlert();
+		alert();
 	}
 
 	@Override
 	public void end(String... eventParams) {
 		this.criticality = Criticality.CLEAR;
-		sendAlert();
+		alert();
 	}
 
 	@Override
@@ -61,12 +61,12 @@ public class DiskUsageEvent implements CriticalityEvent {
 		if (this.criticality != criticality) {
 			this.criticality = criticality;
 			this.percentageUsed = eventParams[0];
-			sendAlert();
+			alert();
 		}
 	}
 
 	@Override
-	public void sendAlert() {
+	public void alert() {
 		String alertMessage;
 		switch (criticality) {
 		case CLEAR:

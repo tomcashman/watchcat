@@ -28,9 +28,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import com.viridiansoftware.watchcat.node.ElasticSearchConstants;
 
 /**
  * Polls the alert threshold settings from ElasticSearch
@@ -39,19 +43,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ThresholdPoller implements Runnable {
-	private static String WATCHCAT_INDEX = "watchcat";
-	private static String THRESHOLD_TYPE = "thresholds";
-	private static String BANDWIDTH_ID = "bandwidth";
-	private static String FILESYSTEMS_ID = "filesystems";
-	private static String LOAD_AVERAGE_ID = "loadaverage";
-	private static String MEMORY_USAGE_ID = "memoryusage";
-	private static String NETWORK_CONNECTIONS_ID = "connections";
-	
 	@Autowired
 	private TransportClient transportClient;
 	@Autowired
 	private ScheduledExecutorService scheduledExecutorService;
-	
+	@Autowired
+	@Qualifier("hostname")
+	private String hostname;
+
 	@Autowired
 	private BandwidthThresholds bandwidthThresholds;
 	@Autowired
@@ -63,17 +62,26 @@ public class ThresholdPoller implements Runnable {
 	@Autowired
 	private NetworkConnectionsThresholds networkConnectionsThresholds;
 
+	@Autowired
+	private ThresholdInitializer thresholdInitializer;
+
 	@PostConstruct
 	public void postConstruct() {
+		thresholdInitializer.initializeThresholds();
 		scheduledExecutorService.scheduleAtFixedRate(this, 5000, 10000,
 				TimeUnit.MILLISECONDS);
 	}
-	
+
 	@Override
 	public void run() {
+		pollLoadAverageThresholds();
 	}
-	
+
 	private void pollLoadAverageThresholds() {
-		
+		GetResponse getResponse = transportClient
+				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
+						ElasticSearchConstants.LOAD_AVERAGE).execute()
+				.actionGet();
+		loadAverageThresholds.fromJson(getResponse);
 	}
 }

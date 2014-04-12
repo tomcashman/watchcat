@@ -46,7 +46,7 @@ import com.viridiansoftware.watchcat.node.util.ShellCommand;
  */
 @ComponentScan(basePackages={"com.viridiansoftware.watchcat"})
 @EnableAutoConfiguration
-@PropertySource("file:/etc/watchcat/node.properties")
+@PropertySource({ "file:/etc/watchcat/node.properties", "file:/etc/watchcat/smtp.properties" })
 public class Watchcat {
 	private static ScheduledExecutorService scheduledExecutorService;
 	

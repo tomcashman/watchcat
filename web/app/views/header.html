@@ -6,14 +6,18 @@
 			<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
 			<span class="icon-bar"></span> <span class="icon-bar"></span>
 		</button>
-		<a class="navbar-brand" href="#"><i class="fa fa-tachometer fa-fw"></i>
-			watchcat</a>
+		<a class="navbar-brand" href="#"><img src="images/watchcat.png" class="watchcat-icon"/>
+			watchcat</a>		
 	</div>
 
 	<!-- Collect the nav links, forms, and other content for toggling -->
-	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" bindonce>
+	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		<ul class="nav navbar-nav navbar-left">
+			<li ng-class="{active : !isAlertsPage}"><a href="#/{{currentHost}}/dashboard"><i class="fa fa-tachometer"></i></a><li>
+			<li ng-class="{active : isAlertsPage}"><a href="#/{{currentHost}}/alerts"><i class="fa fa-bell"></i></a><li>
+		</ul>
 		<ul class="nav navbar-nav navbar-right">
-		<li class="dropdown" ng-show="hosts.length > 0"><a href="#" class="dropdown-toggle"
+		<li class="dropdown" ng-show="location == 'dashboard'"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown">{{timePeriods[selectedTimePeriod]}} <b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					<li data-ng-repeat="timePeriod in timePeriods track by $index">
@@ -25,7 +29,7 @@
 				data-toggle="dropdown">{{currentHost}} <b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					<li data-ng-repeat="host in hosts"><a
-						href="#/{{host}}">{{host}}</a></li>
+						href="#/{{host}}/">{{host}}</a></li>
 				</ul></li>
 			<li><a href="https://github.com/tomcashman/linux-graph"><i
 					class="fa fa-github"></i> Contribute on Github</a></li>

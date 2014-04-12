@@ -23,7 +23,15 @@
  */
 package com.viridiansoftware.watchcat.node.monitoring.threshold;
 
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.common.util.concurrent.jsr166e.extra.AtomicDouble;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.viridiansoftware.watchcat.node.metrics.LoadAverage;
@@ -39,18 +47,61 @@ public class LoadAverageThresholds {
 	private AtomicDouble fiveMinuteAverageMinorThreshold, fiveMinuteAverageMajorThreshold, fiveMinuteAverageCriticalThreshold;
 	private AtomicDouble fifteenMinuteAverageMinorThreshold, fifteenMinuteAverageMajorThreshold, fifteenMinuteAverageCriticalThreshold;
 
-	public LoadAverageThresholds() {
-		oneMinuteAverageCriticalThreshold = new AtomicDouble(Double.MAX_VALUE);
-		oneMinuteAverageMajorThreshold = new AtomicDouble(Double.MAX_VALUE);
-		oneMinuteAverageMinorThreshold = new AtomicDouble(Double.MAX_VALUE);
+	@Autowired
+	private LoadAverage loadAverage;
+	
+	@PostConstruct
+	public void postConstruct() {
+		oneMinuteAverageCriticalThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 3);
+		oneMinuteAverageMajorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 2);
+		oneMinuteAverageMinorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 1);
 		
-		fiveMinuteAverageCriticalThreshold = new AtomicDouble(Double.MAX_VALUE);
-		fiveMinuteAverageMajorThreshold = new AtomicDouble(Double.MAX_VALUE);
-		fiveMinuteAverageMinorThreshold = new AtomicDouble(Double.MAX_VALUE);
+		fiveMinuteAverageCriticalThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 2);
+		fiveMinuteAverageMajorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 1);
+		fiveMinuteAverageMinorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores());
 		
-		fifteenMinuteAverageCriticalThreshold = new AtomicDouble(Double.MAX_VALUE);
-		fifteenMinuteAverageMajorThreshold = new AtomicDouble(Double.MAX_VALUE);
-		fifteenMinuteAverageMinorThreshold = new AtomicDouble(Double.MAX_VALUE);
+		fifteenMinuteAverageCriticalThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 0.25);
+		fifteenMinuteAverageMajorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores());
+		fifteenMinuteAverageMinorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() - 0.25);
+	}
+	
+	public void fromJson(GetResponse response) {
+		Map<String, Object> values = response.getSourceAsMap();
+		
+		oneMinuteAverageMinorThreshold.set(Double.parseDouble(values.get("oneMinuteAverageMinorThreshold").toString()));
+		oneMinuteAverageMajorThreshold.set(Double.parseDouble(values.get("oneMinuteAverageMajorThreshold").toString()));
+		oneMinuteAverageCriticalThreshold.set(Double.parseDouble(values.get("oneMinuteAverageCriticalThreshold").toString()));
+
+		fiveMinuteAverageMinorThreshold.set(Double.parseDouble(values.get("fiveMinuteAverageMinorThreshold").toString()));
+		fiveMinuteAverageMajorThreshold.set(Double.parseDouble(values.get("fiveMinuteAverageMajorThreshold").toString()));
+		fiveMinuteAverageCriticalThreshold.set(Double.parseDouble(values.get("fiveMinuteAverageCriticalThreshold").toString()));
+
+		fifteenMinuteAverageMinorThreshold.set(Double.parseDouble(values.get("fifteenMinuteAverageMinorThreshold").toString()));
+		fifteenMinuteAverageMajorThreshold.set(Double.parseDouble(values.get("fifteenMinuteAverageMajorThreshold").toString()));
+		fifteenMinuteAverageCriticalThreshold.set(Double.parseDouble(values.get("fifteenMinuteAverageCriticalThreshold").toString()));
+	}
+	
+	public XContentBuilder toJson() {
+		try {
+			XContentBuilder builder = XContentFactory.jsonBuilder();
+			builder = builder.startObject();
+			builder = builder.field("oneMinuteAverageMinorThreshold", getOneMinuteAverageMinorThreshold());
+			builder = builder.field("oneMinuteAverageMajorThreshold", getOneMinuteAverageMajorThreshold());
+			builder = builder.field("oneMinuteAverageCriticalThreshold", getOneMinuteAverageCriticalThreshold());
+			
+			builder = builder.field("fiveMinuteAverageMinorThreshold", getFiveMinuteAverageMinorThreshold());
+			builder = builder.field("fiveMinuteAverageMajorThreshold", getFiveMinuteAverageMajorThreshold());
+			builder = builder.field("fiveMinuteAverageCriticalThreshold", getFiveMinuteAverageCriticalThreshold());
+			
+			builder = builder.field("fifteenMinuteAverageMinorThreshold", getFifteenMinuteAverageMinorThreshold());
+			builder = builder.field("fifteenMinuteAverageMajorThreshold", getFifteenMinuteAverageMajorThreshold());
+			builder = builder.field("fifteenMinuteAverageCriticalThreshold", getFifteenMinuteAverageCriticalThreshold());
+			builder = builder.endObject();
+			return builder;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public double getOneMinuteAverageMinorThreshold() {

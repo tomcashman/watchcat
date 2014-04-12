@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('watchcatApp').controller('HostCtrl', function($scope, $route, $routeParams, $interval, $window, Metrics) {
+angular.module('watchcatApp').controller('DashboardCtrl', function($scope, $route, $routeParams, $interval, $window, Metrics) {
 	$scope.flotOptions = {
 			series: {
 				shadowSize: 0,	// Drawing is faster without shadows
@@ -139,7 +139,7 @@ angular.module('watchcatApp').controller('HostCtrl', function($scope, $route, $r
 				var timestamp = bucket.from;
 				if(i == response.aggregations.timestamps.buckets.length - 1)
 					timestamp = bucket.to;
-				if(!bucket.rx.value)
+				if(bucket.rx.value == null)
 					continue;
 				
 				$scope.bandwidth[0].data.push([

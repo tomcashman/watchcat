@@ -31,6 +31,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.viridiansoftware.watchcat.node.alerts.AlertSender;
 import com.viridiansoftware.watchcat.node.event.Criticality;
 import com.viridiansoftware.watchcat.node.event.loadaverage.LoadAverageEvent;
 import com.viridiansoftware.watchcat.node.metrics.LoadAverage;
@@ -50,6 +51,8 @@ public class LoadAverageMonitor implements Runnable {
 	private ScheduledExecutorService scheduledExecutorService;
 	@Autowired
 	private LoadAverageThresholds loadAverageThresholds;
+	@Autowired
+	private AlertSender alertSender;
 	
 	private LoadAverageEvent oneMinuteAverageEvent, fiveMinuteAverageEvent, fifteenMinuteAverageEvent;
 	
@@ -97,7 +100,7 @@ public class LoadAverageMonitor implements Runnable {
 	}
 	
 	private void beginOneMinuteAverageEvent(Criticality criticality, double loadAverage) {
-		oneMinuteAverageEvent = new LoadAverageEvent(1);
+		oneMinuteAverageEvent = new LoadAverageEvent(alertSender, 1);
 		oneMinuteAverageEvent.begin(criticality, String.valueOf(loadAverage));
 	}
 	
@@ -127,7 +130,7 @@ public class LoadAverageMonitor implements Runnable {
 	}
 	
 	private void beginFiveMinuteAverageEvent(Criticality criticality, double loadAverage) {
-		fiveMinuteAverageEvent = new LoadAverageEvent(5);
+		fiveMinuteAverageEvent = new LoadAverageEvent(alertSender, 5);
 		fiveMinuteAverageEvent.begin(criticality, String.valueOf(loadAverage));
 	}
 	
@@ -157,7 +160,7 @@ public class LoadAverageMonitor implements Runnable {
 	}
 	
 	private void beginFifteenMinuteAverageEvent(Criticality criticality, double loadAverage) {
-		fifteenMinuteAverageEvent = new LoadAverageEvent(15);
+		fifteenMinuteAverageEvent = new LoadAverageEvent(alertSender, 15);
 		fifteenMinuteAverageEvent.begin(criticality, String.valueOf(loadAverage));
 	}
 }

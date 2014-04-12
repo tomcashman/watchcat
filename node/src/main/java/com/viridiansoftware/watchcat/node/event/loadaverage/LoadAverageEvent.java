@@ -23,6 +23,7 @@
  */
 package com.viridiansoftware.watchcat.node.event.loadaverage;
 
+import com.viridiansoftware.watchcat.node.alerts.AlertSender;
 import com.viridiansoftware.watchcat.node.event.Criticality;
 import com.viridiansoftware.watchcat.node.event.CriticalityEvent;
 import com.viridiansoftware.watchcat.node.metrics.LoadAverage;
@@ -37,8 +38,10 @@ public class LoadAverageEvent implements CriticalityEvent {
 	private int minutePeriod;
 	private Criticality criticality;
 	private String loadAverage;
+	private AlertSender alertSender;
 
-	public LoadAverageEvent(int minutePeriod) {
+	public LoadAverageEvent(AlertSender alertSender, int minutePeriod) {
+		this.alertSender = alertSender;
 		this.minutePeriod = minutePeriod;
 	}
 
@@ -46,13 +49,13 @@ public class LoadAverageEvent implements CriticalityEvent {
 	public void begin(Criticality criticality, String... eventParams) {
 		this.criticality = criticality;
 		this.loadAverage = eventParams[0];
-		sendAlert();
+		alert();
 	}
 
 	@Override
 	public void end(String... eventParams) {
 		this.criticality = Criticality.CLEAR;
-		sendAlert();
+		alert();
 	}
 
 	@Override
@@ -60,22 +63,21 @@ public class LoadAverageEvent implements CriticalityEvent {
 		if (this.criticality != criticality) {
 			this.criticality = criticality;
 			this.loadAverage = eventParams[0];
-			sendAlert();
+			alert();
 		}
 	}
 
 	@Override
-	public void sendAlert() {
+	public void alert() {
 		String alertMessage;
 		switch (criticality) {
 		case CLEAR:
 			alertMessage = "Load average has returned to normal";
 			break;
 		default:
-			alertMessage = minutePeriod + " minute load average has reached a "
-					+ criticality + " level of " + loadAverage;
+			alertMessage = minutePeriod + " minute load average is at a status of " + loadAverage;
 			break;
 		}
-
+		alertSender.sendAlert(criticality, alertMessage);
 	}
 }

@@ -2,11 +2,18 @@
 
 angular.module('watchcatApp').controller(
 		'HeaderCtrl',
-		function($rootScope, $scope, $routeParams, $modal, Hosts) {
+		function($rootScope, $scope, $routeParams, $modal, $location, Hosts) {
+			$scope.isAlertsPage = $location.path().indexOf('alerts') != -1;
+			
+			$rootScope.$on('$locationChangeSuccess', function () {
+				$scope.isAlertsPage = $location.path().indexOf('alerts') != -1;
+		    });
+
 			$scope.currentHost = "";
 			if ($routeParams.host) {
 				$scope.currentHost = $routeParams.host;
 			}
+
 			$scope.hosts = [];
 			$scope.dateFormat = 'YYYY-MM-DDTHH:mm:ssZ';
 
@@ -111,52 +118,52 @@ angular.module('watchcatApp').controller(
 		});
 
 var ModalInstanceCtrl = function($scope, $modalInstance) {
-	$scope.onStartDateSet = function (newDate, oldDate) {
+	$scope.onStartDateSet = function(newDate, oldDate) {
 		$scope.startDate = newDate;
 	};
-	$scope.onEndDateSet = function (newDate, oldDate) {
+	$scope.onEndDateSet = function(newDate, oldDate) {
 		$scope.endDate = newDate;
 	};
-	
+
 	$scope.invalidDates = function() {
-		if(!$scope.startDate)
+		if (!$scope.startDate)
 			return true;
-		if(!$scope.endDate)
+		if (!$scope.endDate)
 			return true;
-		if(moment($scope.startDate).isSame(moment($scope.endDate)))
+		if (moment($scope.startDate).isSame(moment($scope.endDate)))
 			return true;
-		if(moment($scope.startDate).isAfter(moment($scope.endDate)))
+		if (moment($scope.startDate).isAfter(moment($scope.endDate)))
 			return true;
-		
+
 		return false;
 	};
-	
+
 	$scope.ok = function() {
 		var tickSize = (moment($scope.endDate).valueOf() - moment(
 				$scope.startDate).valueOf()) / 1000;
 		var tickUnit = "second";
-		if(tickSize > 86400) {
+		if (tickSize > 86400) {
 			tickSize = 1;
 			tickUnit = "day";
-		} else if(tickSize > 21600) {
+		} else if (tickSize > 21600) {
 			tickSize = 6;
 			tickUnit = "hour";
-		} else if(tickSize > 7200) {
+		} else if (tickSize > 7200) {
 			tickSize = 2;
 			tickUnit = "hour";
-		} else if(tickSize > 1800) {
+		} else if (tickSize > 1800) {
 			tickSize = 30;
 			tickUnit = "minute";
-		} else if(tickSize > 900) {
+		} else if (tickSize > 900) {
 			tickSize = 10;
 			tickUnit = "minute";
-		} else if(tickSize > 300) {
+		} else if (tickSize > 300) {
 			tickSize = 5;
 			tickUnit = "minute";
-		} else if(tickSize > 90) {
+		} else if (tickSize > 90) {
 			tickSize = 1;
 			tickUnit = "minute";
-		}  else if(tickSize > 30) {
+		} else if (tickSize > 30) {
 			tickSize = 20;
 			tickUnit = "second";
 		}

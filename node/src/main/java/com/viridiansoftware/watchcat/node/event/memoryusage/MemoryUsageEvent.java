@@ -53,7 +53,7 @@ public class MemoryUsageEvent implements CriticalityEvent {
 	}
 
 	@Override
-	public void sendAlert() {
+	public void alert() {
 		// TODO Auto-generated method stub
 		
 	}

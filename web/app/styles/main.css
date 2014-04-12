@@ -2,6 +2,10 @@ body {
 	background-image: url('../images/brushed.png');
 }
 
+.watchcat-icon {
+	margin-top: -2px;
+}
+
 flot > div {
 	min-height: 160px;
 	height: 160px;

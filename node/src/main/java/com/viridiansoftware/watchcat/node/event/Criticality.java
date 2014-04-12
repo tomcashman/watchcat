@@ -29,6 +29,7 @@ package com.viridiansoftware.watchcat.node.event;
  * @author Thomas Cashman
  */
 public enum Criticality {
+	INFO,
 	CLEAR,
 	MINOR,
 	MAJOR,

@@ -41,6 +41,7 @@ project(":" + rootProject.name + "-node") {
 	dependencies {
 		compile 'org.springframework.boot:spring-boot-starter:1.0.1.RELEASE'
 		compile 'org.elasticsearch:elasticsearch:1.1.0'
+		compile 'javax.mail:mail:1.4.7'
 		
 		testCompile 'junit:junit:4.11'
         	testCompile 'org.jmock:jmock-legacy:2.6.0'

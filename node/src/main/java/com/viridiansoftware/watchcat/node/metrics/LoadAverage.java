@@ -55,6 +55,7 @@ public class LoadAverage implements Runnable {
 		oneMinuteAverage = new AtomicDouble();
 		fiveMinuteAverage = new AtomicDouble();
 		fifteenMinuteAverage = new AtomicDouble();
+		run();
 	}
 	
 	@Override

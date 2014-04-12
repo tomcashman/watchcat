@@ -1,0 +1,77 @@
+<form class="form-horizontal" role="form" name="loadAverageThresholdForm">
+  <div class="form-group">
+  	<div class="col-lg-offset-3 col-lg-9">
+    	<h4 class="form-control-static">1 minute load average alert thresholds</h4>
+   	</div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Critical</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.oneMinuteAverageCriticalThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Major</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.oneMinuteAverageMajorThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Minor</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.oneMinuteAverageMinorThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+  	<div class="col-lg-offset-3 col-lg-9">
+    	<h4 class="form-control-static">5 minute load average alert thresholds</h4>
+   	</div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Critical</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.fiveMinuteAverageCriticalThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Major</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.fiveMinuteAverageMajorThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Minor</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.fiveMinuteAverageMinorThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+  	<div class="col-lg-offset-3 col-lg-9">
+    	<h4 class="form-control-static">15 minute load average alert thresholds</h4>
+   	</div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Critical</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.fifteenMinuteAverageCriticalThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Major</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.fifteenMinuteAverageMajorThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-lg-3 control-label">Minor</label>
+    <div class="col-lg-6">
+      <input type="number" class="form-control" ng-model="threshold.fifteenMinuteAverageMinorThreshold" step="any" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-lg-offset-3 col-lg-6">
+      <button type="submit" class="btn btn-default btn-block" ng-click="save(threshold)" ng-disabled="loadAverageThresholdForm.$invalid">Save</button>
+      <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.msg}}</alert>
+    </div>
+  </div>
+</form>

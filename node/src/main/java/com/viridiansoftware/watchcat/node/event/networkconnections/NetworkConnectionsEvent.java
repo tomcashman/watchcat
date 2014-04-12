@@ -45,7 +45,7 @@ public class NetworkConnectionsEvent implements StatusEvent {
 	}
 
 	@Override
-	public void sendAlert() {
+	public void alert() {
 		// TODO Auto-generated method stub
 		
 	}

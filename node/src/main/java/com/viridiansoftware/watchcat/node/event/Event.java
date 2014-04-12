@@ -23,6 +23,8 @@
  */
 package com.viridiansoftware.watchcat.node.event;
 
+
+
 /**
  * Common interface for system events
  *
@@ -31,7 +33,7 @@ package com.viridiansoftware.watchcat.node.event;
 public interface Event {
 
 	/**
-	 * Sends an alert about this event
+	 * Logs and sends an alert about this event
 	 */
-	public void sendAlert();
+	public void alert();
 }
