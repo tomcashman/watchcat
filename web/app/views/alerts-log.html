@@ -1,3 +1,9 @@
+<ul class="pagination">
+  <li><a ng-click="goBack()">&laquo;</a></li>
+  <li ng-repeat="p in pages" ng-class="{active : p === page}"><a ng-click="goToPage(p)">{{p}}</a></li>
+  <li><a ng-click="goForward()">&raquo;</a></li>
+</ul>
+
 <table class="table table-striped">
 	<thead>
 		<tr>

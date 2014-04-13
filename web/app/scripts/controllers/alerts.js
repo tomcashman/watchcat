@@ -19,17 +19,57 @@ angular.module('watchcatApp').controller(
 			};
 			
 			if($scope.section === 'log') {
-				AlertsLog.getLogs($routeParams.host).then(function(response) {
-					for(var i = 0; i < response.hits.hits.length; i++) {
-						var datetime = moment(response.hits.hits[i]._source.timestamp);
-						datetime.local();
-						response.hits.hits[i]._source.datetime = datetime.format("MMMM Do YYYY, h:mm:ss a");
+				$scope.page = 1;
+				$scope.totalPages = 1;
+				$scope.pages = [];
+				
+				$scope.fetchPage = function() {
+					AlertsLog.getLogs($routeParams.host, $scope.page).then(function(response) {
+						for(var i = 0; i < response.hits.hits.length; i++) {
+							var datetime = moment(response.hits.hits[i]._source.timestamp);
+							datetime.local();
+							response.hits.hits[i]._source.datetime = datetime.format("MMMM Do YYYY, h:mm:ss a");
+						}
+						
+						$scope.alerts = response.hits.hits;
+					}, function() {
+						
+					});
+				};
+				$scope.goToPage = function(pageNumber) {
+					$scope.page = pageNumber;
+					$scope.fetchPage();
+				};
+				
+				$scope.goBack = function() {
+					if($scope.page > 1) {
+						$scope.page = $scope.page - 1;
+						$scope.fetchPage();
 					}
-					
-					$scope.alerts = response.hits.hits;
+				};
+				$scope.goForward = function() {
+					if($scope.page < $scope.totalPages) {
+						$scope.page = $scope.page + 1;
+						$scope.fetchPage();
+					}
+				};
+				
+				AlertsLog.count($routeParams.host).then(function(response) {
+					$scope.totalPages = response.count / 15;
+					if($scope.totalPages < 1) {
+						$scope.totalPages = 1;
+					}
+					var pages = [];
+					for(var i = 0; i < $scope.totalPages; i++) {
+						pages.push(i + 1);
+					}
+					$scope.pages = pages;
 				}, function() {
 					
 				});
+				$scope.fetchPage();
+				
+				
 			} else if($scope.section === 'loadaverage') {
 				AlertThresholds.getLoadAverageThresholds($routeParams.host).then(function(response) {
 					$scope.threshold = response;
