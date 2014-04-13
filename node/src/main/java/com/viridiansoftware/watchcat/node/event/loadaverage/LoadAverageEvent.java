@@ -75,7 +75,7 @@ public class LoadAverageEvent implements CriticalityEvent {
 			alertMessage = "Load average has returned to normal";
 			break;
 		default:
-			alertMessage = minutePeriod + " minute load average is at a status of " + loadAverage;
+			alertMessage = minutePeriod + " minute load average is at a value of " + loadAverage;
 			break;
 		}
 		alertSender.sendAlert(criticality, alertMessage);

@@ -23,10 +23,8 @@
  */
 package com.viridiansoftware.watchcat.node.alerts;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.PostConstruct;
 
