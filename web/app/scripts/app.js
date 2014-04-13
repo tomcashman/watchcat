@@ -13,6 +13,9 @@ angular.module('watchcatApp',
 			}).when('/:host/alerts/log', {
 				templateUrl : 'views/alerts.html',
 				controller : 'AlertsCtrl'
+			}).when('/:host/alerts/emailaddresses', {
+				templateUrl : 'views/alerts.html',
+				controller : 'AlertsCtrl'
 			}).when('/:host/alerts/loadaverage', {
 				templateUrl : 'views/alerts.html',
 				controller : 'AlertsCtrl'

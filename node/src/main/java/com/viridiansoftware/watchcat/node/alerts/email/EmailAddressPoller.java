@@ -21,78 +21,67 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.watchcat.node.alerts;
+package com.viridiansoftware.watchcat.node.alerts.email;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.PostConstruct;
 
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.viridiansoftware.watchcat.node.alerts.email.EmailAddressPoller;
-import com.viridiansoftware.watchcat.node.alerts.email.SMTPAlert;
-import com.viridiansoftware.watchcat.node.event.Criticality;
+import com.viridiansoftware.watchcat.node.ElasticSearchConstants;
 
 /**
- *
+ * Polls list of email addresses that have been added to receive alerts
  *
  * @author Thomas Cashman
  */
 @Component
-public class AlertSender {
+public class EmailAddressPoller implements Runnable {
 	@Autowired
 	private TransportClient transportClient;
 	@Autowired
+	private ScheduledExecutorService scheduledExecutorService;
+	@Autowired
 	@Qualifier("hostname")
 	private String hostname;
-	@Autowired
-	private EmailAddressPoller emailAddressPoller;
 	
-	@Value("${smtp.host}")
-	private String smtpHost;
-	@Value("${smtp.port}")
-	private String smtpPort;
-	@Value("${smtp.tls}")
-	private String smtpTls;
-	@Value("${smtp.username}")
-	private String smtpUsername;
-	@Value("${smtp.password}")
-	private String smtpPassword;
-
-	private Properties smtpHostProperties;
-
+	private AtomicReference<List<String>> emailAddresses;
+	
+	public EmailAddressPoller() {
+		emailAddresses = new AtomicReference<List<String>>(new ArrayList<String>(5));
+	}
+	
 	@PostConstruct
 	public void postConstruct() {
-		smtpHostProperties = new Properties();
-		smtpHostProperties.put("mail.smtp.auth", "true");
-		smtpHostProperties.put("mail.smtp.starttls.enable", smtpTls);
-		smtpHostProperties.put("mail.smtp.host", smtpHost);
-		smtpHostProperties.put("mail.smtp.port", smtpPort);
+		scheduledExecutorService.scheduleAtFixedRate(this, 5, 10, TimeUnit.SECONDS);
+	}
+	
+	@Override
+	public void run() {
+		GetResponse response = transportClient
+				.prepareGet(hostname, ElasticSearchConstants.ALERT_DESTINATION_TYPE,
+						ElasticSearchConstants.EMAIL_ADDRESSES).execute()
+				.actionGet();
+		if(!response.isExists()) {
+			return;
+		}
+		
+		Map<String, Object> fields = response.getSourceAsMap();
+		List<String> emails = (List<String>) fields.get("list");
+		emailAddresses.set(emails);
 	}
 
-	public void sendAlert(Criticality criticality, String message) {
-		AlertLogger alertLogger = new AlertLogger(hostname, criticality, message);
-		alertLogger.log(transportClient);
-
-		List<String> emailAlertRecipients = emailAddressPoller.getEmailAddresses();
-		if (emailAlertRecipients.size() > 0 && smtpHost != null && smtpHost.length() > 0) {
-			SMTPAlert smtpAlert = new SMTPAlert(smtpHostProperties,
-					smtpUsername, smtpPassword, hostname, criticality, message);
-
-			for (String emailAddress : emailAlertRecipients) {
-				if (!smtpAlert.send(emailAddress)) {
-					alertLogger = new AlertLogger(hostname, Criticality.CRITICAL,
-							"Could not send email alert to " + emailAddress);
-					alertLogger.log(transportClient);
-				}
-			}
-		}
+	public List<String> getEmailAddresses() {
+		return emailAddresses.get();
 	}
 }

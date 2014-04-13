@@ -32,7 +32,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
-import com.viridiansoftware.watchcat.node.metrics.domain.Filesystem;
+import com.viridiansoftware.watchcat.node.metrics.domain.Disk;
 import com.viridiansoftware.watchcat.node.util.ShellCommand;
 
 /**
@@ -45,31 +45,31 @@ import com.viridiansoftware.watchcat.node.util.ShellCommand;
 @Component
 public class DiskUsage implements Runnable {
 	private ShellCommand command;
-	private AtomicReference<LinkedList<Filesystem>> filesystems;
+	private AtomicReference<LinkedList<Disk>> disks;
 	
 	public DiskUsage() {
 		command = new ShellCommand("/bin/df --block-size=1M|awk '{print $1\",\"$2\",\"$3\",\"$4\",\"$5\",\"$6}'");
-		filesystems = new AtomicReference<>(new LinkedList<Filesystem>());
+		disks = new AtomicReference<>(new LinkedList<Disk>());
 	}
 	
 	@Override
 	public void run() {
-		LinkedList<Filesystem> result = new LinkedList<Filesystem>();
+		LinkedList<Disk> result = new LinkedList<Disk>();
 		String commandResult = command.execute();
 		
 		String [] lines = commandResult.split("\n");
 		for(int i = 1; i < lines.length; i++) {
 			String [] diskInfo = lines[i].split(",");
-			Filesystem filesystem = new Filesystem(diskInfo[0], Integer.parseInt(diskInfo[1]), Integer.parseInt(diskInfo[2]),
+			Disk disk = new Disk(diskInfo[0], Integer.parseInt(diskInfo[1]), Integer.parseInt(diskInfo[2]),
 					Integer.parseInt(diskInfo[3]), Integer.parseInt(diskInfo[4].replace("%", "")), diskInfo[5]);
-			result.add(filesystem);
+			result.add(disk);
 		}
 		
-		filesystems.set(result);
+		disks.set(result);
 	}
 	
-	public List<Filesystem> getFilesystems() {
-		return filesystems.get();
+	public List<Disk> getFilesystems() {
+		return disks.get();
 	}
 	
 	public XContentBuilder toJson(long timestamp) {
@@ -79,16 +79,16 @@ public class DiskUsage implements Runnable {
 			builder = builder.field("timestamp", timestamp);
 			builder = builder.startArray("filesystems");
 			
-			Iterator<Filesystem> iterator = filesystems.get().iterator();
+			Iterator<Disk> iterator = disks.get().iterator();
 			while(iterator.hasNext()) {
-				Filesystem filesystem = iterator.next();
+				Disk disk = iterator.next();
 				builder = builder.startObject();
-				builder = builder.field("filesystem", filesystem.getFilesystem());
-				builder = builder.field("size", filesystem.getSize());
-				builder = builder.field("used", filesystem.getUsed());
-				builder = builder.field("free", filesystem.getFree());
-				builder = builder.field("percentageUsed", filesystem.getPercentageUsed());
-				builder = builder.field("mountPoint", filesystem.getMountPoint());
+				builder = builder.field("filesystem", disk.getDisk());
+				builder = builder.field("size", disk.getSize());
+				builder = builder.field("used", disk.getUsed());
+				builder = builder.field("free", disk.getFree());
+				builder = builder.field("percentageUsed", disk.getPercentageUsed());
+				builder = builder.field("mountPoint", disk.getMountPoint());
 				builder = builder.endObject();
 			}
 			
@@ -104,13 +104,13 @@ public class DiskUsage implements Runnable {
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("DiskUsage [filesystems=\n");
+		stringBuilder.append("DiskUsage [disk=\n");
 		
-		List<Filesystem> items = filesystems.get();
-		Iterator<Filesystem> iterator = items.iterator();
+		List<Disk> items = disks.get();
+		Iterator<Disk> iterator = items.iterator();
 		while(iterator.hasNext()) {
-			Filesystem filesystem = iterator.next();
-			stringBuilder.append(filesystem);
+			Disk disk = iterator.next();
+			stringBuilder.append(disk);
 			stringBuilder.append("\n");
 		}
 		stringBuilder.append("]");

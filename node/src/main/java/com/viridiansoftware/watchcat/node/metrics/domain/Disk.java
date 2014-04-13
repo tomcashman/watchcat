@@ -25,21 +25,21 @@ package com.viridiansoftware.watchcat.node.metrics.domain;
 
 
 /**
- * A single filesystem outputted from df
+ * A single disk outputted from df
  *
  * @author Thomas Cashman
  */
-public class Filesystem {
-	private String filesystem;
+public class Disk {
+	private String disk;
 	private int size;
 	private int used;
 	private int free;
 	private int percentageUsed;
 	private String mountPoint;
 	
-	public Filesystem(String filesystem, int size, int used, int free,
+	public Disk(String disk, int size, int used, int free,
 			int percentageUsed, String mountPoint) {
-		this.filesystem = filesystem;
+		this.disk = disk;
 		this.size = size;
 		this.used = used;
 		this.free = free;
@@ -47,8 +47,8 @@ public class Filesystem {
 		this.mountPoint = mountPoint;
 	}
 
-	public String getFilesystem() {
-		return filesystem;
+	public String getDisk() {
+		return disk;
 	}
 
 	public int getSize() {
@@ -73,7 +73,7 @@ public class Filesystem {
 
 	@Override
 	public String toString() {
-		return "Filesystem [filesystem=" + filesystem + ", size=" + size
+		return "Disk [disk=" + disk + ", size=" + size
 				+ "M, used=" + used + "M, available=" + free
 				+ "M, percentageUsed=" + percentageUsed + "%, mountPoint="
 				+ mountPoint + "]";

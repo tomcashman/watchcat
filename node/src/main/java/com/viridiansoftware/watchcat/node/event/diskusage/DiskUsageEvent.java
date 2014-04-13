@@ -27,22 +27,22 @@ import com.viridiansoftware.watchcat.node.alerts.AlertSender;
 import com.viridiansoftware.watchcat.node.event.Criticality;
 import com.viridiansoftware.watchcat.node.event.CriticalityEvent;
 import com.viridiansoftware.watchcat.node.metrics.DiskUsage;
-import com.viridiansoftware.watchcat.node.metrics.domain.Filesystem;
+import com.viridiansoftware.watchcat.node.metrics.domain.Disk;
 
 /**
  * Stores the event status for the {@link DiskUsage} of a specific
- * {@link Filesystem} and sends associated alerts
+ * {@link Disk} and sends associated alerts
  *
  * @author Thomas Cashman
  */
 public class DiskUsageEvent implements CriticalityEvent {
-	private String filesystem;
+	private String disk;
 	private Criticality criticality;
 	private String percentageUsed;
 	private AlertSender alertSender;
 
-	public DiskUsageEvent(AlertSender alertSender, String filesystem) {
-		this.filesystem = filesystem;
+	public DiskUsageEvent(AlertSender alertSender, String disk) {
+		this.disk = disk;
 		this.alertSender = alertSender;
 	}
 
@@ -73,11 +73,11 @@ public class DiskUsageEvent implements CriticalityEvent {
 		String alertMessage;
 		switch (criticality) {
 		case CLEAR:
-			alertMessage = "Filesystem '" + filesystem
+			alertMessage = "Disk '" + disk
 					+ "' usage has returned to normal";
 			break;
 		default:
-			alertMessage = "Filesystem '" + filesystem + "' is now at " + percentageUsed + "% used";
+			alertMessage = "Disk '" + disk + "' is now at " + percentageUsed + "% used";
 			break;
 		}
 		alertSender.sendAlert(criticality, alertMessage);

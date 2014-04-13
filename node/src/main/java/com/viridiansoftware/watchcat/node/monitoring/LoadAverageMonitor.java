@@ -58,7 +58,7 @@ public class LoadAverageMonitor implements Runnable {
 	
 	@PostConstruct
 	public void postConstruct() {
-		scheduledExecutorService.schedule(this, 6000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.schedule(this, 6, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class LoadAverageMonitor implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		scheduledExecutorService.schedule(this, 5000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.schedule(this, 5, TimeUnit.SECONDS);
 	}
 
 	private void checkOneMinuteAverage(LoadAverage loadAverage) {

@@ -52,7 +52,7 @@ public class ThresholdPoller implements Runnable {
 	private String hostname;
 
 	@Autowired
-	private FilesystemThresholds diskUsageThresholds;
+	private DiskThresholds diskUsageThresholds;
 	@Autowired
 	private LoadAverageThresholds loadAverageThresholds;
 	@Autowired
@@ -64,8 +64,8 @@ public class ThresholdPoller implements Runnable {
 	@PostConstruct
 	public void postConstruct() {
 		thresholdInitializer.initializeThresholds();
-		scheduledExecutorService.scheduleAtFixedRate(this, 5000, 10000,
-				TimeUnit.MILLISECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(this, 5, 10,
+				TimeUnit.SECONDS);
 	}
 
 	@Override

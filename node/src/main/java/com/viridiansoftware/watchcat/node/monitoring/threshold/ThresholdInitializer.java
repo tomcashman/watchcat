@@ -48,7 +48,7 @@ public class ThresholdInitializer {
 	private String hostname;
 
 	@Autowired
-	private FilesystemThresholds filesystemThresholds;
+	private DiskThresholds diskThresholds;
 	@Autowired
 	private LoadAverageThresholds loadAverageThresholds;
 	@Autowired
@@ -123,7 +123,7 @@ public class ThresholdInitializer {
 					.prepareIndex(hostname,
 							ElasticSearchConstants.THRESHOLD_TYPE,
 							ElasticSearchConstants.FILESYSTEMS)
-					.setSource(filesystemThresholds.toJson()).execute()
+					.setSource(diskThresholds.toJson()).execute()
 					.actionGet();
 			
 			if(!indexResponse.isCreated()) {

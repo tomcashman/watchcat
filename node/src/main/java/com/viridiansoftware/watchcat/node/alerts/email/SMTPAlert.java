@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.viridiansoftware.watchcat.node.alerts;
+package com.viridiansoftware.watchcat.node.alerts.email;
 
 import java.util.Properties;
 
@@ -80,8 +80,8 @@ public class SMTPAlert {
 			message.setFrom(new InternetAddress("from-email@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(emailAddress));
-			message.setSubject("watchcat [" + hostname + "][" + this.criticality + "] " + this.message);
-			message.setText(this.criticality + " alert from '" + hostname + "'\n" + this.message);
+			message.setSubject("[" + hostname + "][" + this.criticality + "] " + this.message);
+			message.setText(this.criticality + " watchcat alert from '" + hostname + "'\n" + this.message);
 
 			Transport.send(message);
 			return true;

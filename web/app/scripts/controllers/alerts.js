@@ -2,7 +2,7 @@
 
 angular.module('watchcatApp').controller(
 		'AlertsCtrl',
-		function($scope, $route, $routeParams, $location, AlertThresholds, AlertsLog) {
+		function($scope, $route, $routeParams, $location, AlertThresholds, AlertEmailAddresses, AlertsLog) {
 			if ($location.path().endsWith('alerts')) {
 				$location.path($location.path() + '/log');
 				return;
@@ -69,7 +69,32 @@ angular.module('watchcatApp').controller(
 				});
 				$scope.fetchPage();
 				
+			} else if($scope.section === 'emailaddresses') {
+				$scope.EMAIL_REGEXP = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+				$scope.addresses = {
+					list: []
+				};
+				AlertEmailAddresses.getEmailAddresses($routeParams.host).then(function(response) {
+					$scope.addresses = response;
+				}, function() {
+					
+				});
 				
+				$scope.addEmailAddress = function() {
+					$scope.addresses.list.push('');
+				};
+				
+				$scope.removeEmailAddress = function(index) {
+					$scope.addresses.list.splice(index, 1);
+				};
+				
+				$scope.save = function(addresses) {
+					AlertEmailAddresses.saveEmailAddresses($routeParams.host, addresses).then(function(response) {
+						$scope.alerts.push({ type: 'success', msg: 'Saved successfully'});
+					}, function() {
+						$scope.alerts.push({ type: 'danger', msg: 'Could not save settings to ElasticSearch'});
+					});
+				};
 			} else if($scope.section === 'loadaverage') {
 				AlertThresholds.getLoadAverageThresholds($routeParams.host).then(function(response) {
 					$scope.threshold = response;

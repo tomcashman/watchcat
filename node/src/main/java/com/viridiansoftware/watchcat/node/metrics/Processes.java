@@ -33,7 +33,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
-import com.viridiansoftware.watchcat.node.metrics.domain.Filesystem;
+import com.viridiansoftware.watchcat.node.metrics.domain.Disk;
 import com.viridiansoftware.watchcat.node.metrics.domain.Process;
 import com.viridiansoftware.watchcat.node.util.ShellCommand;
 

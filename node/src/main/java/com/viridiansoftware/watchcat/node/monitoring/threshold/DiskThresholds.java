@@ -31,20 +31,20 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
-import com.viridiansoftware.watchcat.node.metrics.domain.Filesystem;
+import com.viridiansoftware.watchcat.node.metrics.domain.Disk;
 
 /**
- * Stores alert thresholds for {@link Filesystem}s
+ * Stores alert thresholds for {@link Disk}s
  *
  * @author Thomas Cashman
  */
 @Component
-public class FilesystemThresholds {
+public class DiskThresholds {
 	private AtomicInteger minorThreshold;
 	private AtomicInteger majorThreshold;
 	private AtomicInteger criticalThreshold;
 	
-	public FilesystemThresholds() {
+	public DiskThresholds() {
 		minorThreshold = new AtomicInteger(80);
 		majorThreshold = new AtomicInteger(90);
 		criticalThreshold = new AtomicInteger(95);

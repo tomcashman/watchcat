@@ -40,35 +40,35 @@ import com.viridiansoftware.watchcat.node.event.Criticality;
 import com.viridiansoftware.watchcat.node.event.CriticalityEvent;
 import com.viridiansoftware.watchcat.node.event.diskusage.DiskUsageEvent;
 import com.viridiansoftware.watchcat.node.metrics.DiskUsage;
-import com.viridiansoftware.watchcat.node.metrics.domain.Filesystem;
+import com.viridiansoftware.watchcat.node.metrics.domain.Disk;
 import com.viridiansoftware.watchcat.node.metrics.reporting.LinuxMetricsCollector;
-import com.viridiansoftware.watchcat.node.monitoring.threshold.FilesystemThresholds;
+import com.viridiansoftware.watchcat.node.monitoring.threshold.DiskThresholds;
 
 /**
- * Monitors {@link Filesystem} disk space usage
+ * Monitors {@link Disk} disk space usage
  *
  * @author Thomas Cashman
  */
 @Component
-public class FilesystemMonitor implements Runnable {
+public class DiskMonitor implements Runnable {
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
 	@Autowired
 	private ScheduledExecutorService scheduledExecutorService;
 	@Autowired
-	private FilesystemThresholds filesystemThresholds;
+	private DiskThresholds diskThresholds;
 	@Autowired
 	private AlertSender alertSender;
 	
 	private Map<String, CriticalityEvent> diskUsageEvents;
 	
-	public FilesystemMonitor() {
+	public DiskMonitor() {
 		diskUsageEvents = new ConcurrentHashMap<String, CriticalityEvent>();
 	}
 	
 	@PostConstruct
 	public void postConstruct() {
-		scheduledExecutorService.schedule(this, 6000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.schedule(this, 6, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -76,34 +76,34 @@ public class FilesystemMonitor implements Runnable {
 		try {
 			DiskUsage diskUsage = metricsCollector.getDiskUsage();
 			
-			List<Filesystem> filesystems = diskUsage.getFilesystems();
-			Iterator<Filesystem> iterator = filesystems.iterator();
+			List<Disk> disks = diskUsage.getFilesystems();
+			Iterator<Disk> iterator = disks.iterator();
 			while(iterator.hasNext()) {
-				Filesystem filesystem = iterator.next();
-				String key = filesystem.getFilesystem();
+				Disk disk = iterator.next();
+				String key = disk.getDisk();
 				if(key.compareToIgnoreCase("none") == 0) {
 					continue;
 				}
 				
 				CriticalityEvent existingEvent = diskUsageEvents.get(key);
 				
-				if(filesystem.getPercentageUsed() >= filesystemThresholds.getCriticalThreshold()) {
+				if(disk.getPercentageUsed() >= diskThresholds.getCriticalThreshold()) {
 					if(existingEvent == null) {
-						beginEvent(key, Criticality.CRITICAL, filesystem.getPercentageUsed());
+						beginEvent(key, Criticality.CRITICAL, disk.getPercentageUsed());
 					} else {
-						existingEvent.updateStatus(Criticality.CRITICAL, String.valueOf(filesystem.getPercentageUsed()));
+						existingEvent.updateStatus(Criticality.CRITICAL, String.valueOf(disk.getPercentageUsed()));
 					}
-				} else if(filesystem.getPercentageUsed() >= filesystemThresholds.getMajorThreshold()) {
+				} else if(disk.getPercentageUsed() >= diskThresholds.getMajorThreshold()) {
 					if(existingEvent == null) {
-						beginEvent(key, Criticality.MAJOR, filesystem.getPercentageUsed());
+						beginEvent(key, Criticality.MAJOR, disk.getPercentageUsed());
 					} else {
-						existingEvent.updateStatus(Criticality.MAJOR, String.valueOf(filesystem.getPercentageUsed()));
+						existingEvent.updateStatus(Criticality.MAJOR, String.valueOf(disk.getPercentageUsed()));
 					}
-				} else if(filesystem.getPercentageUsed() >= filesystemThresholds.getMinorThreshold()) {
+				} else if(disk.getPercentageUsed() >= diskThresholds.getMinorThreshold()) {
 					if(existingEvent == null) {
-						beginEvent(key, Criticality.MINOR, filesystem.getPercentageUsed());
+						beginEvent(key, Criticality.MINOR, disk.getPercentageUsed());
 					} else {
-						existingEvent.updateStatus(Criticality.MINOR, String.valueOf(filesystem.getPercentageUsed()));
+						existingEvent.updateStatus(Criticality.MINOR, String.valueOf(disk.getPercentageUsed()));
 					}
 				} else {
 					if(existingEvent != null) {
@@ -115,7 +115,7 @@ public class FilesystemMonitor implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		scheduledExecutorService.schedule(this, 5000, TimeUnit.MILLISECONDS);
+		scheduledExecutorService.schedule(this, 5, TimeUnit.SECONDS);
 	}
 
 	private void beginEvent(String filesystem, Criticality criticality, int percentageUsed) {
