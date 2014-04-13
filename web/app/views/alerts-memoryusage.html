@@ -1,0 +1,94 @@
+<form name="memoryUsageThresholdForm" class="form-horizontal">
+	<div class="form-group">
+		<div class="col-lg-offset-4 col-lg-8">
+			<h4 class="form-control-static">RAM usage alert thresholds</h4>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : memoryUsageThresholdForm.usedMemoryCriticalThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Critical</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="usedMemoryCriticalThreshold" class="form-control" ng-model="threshold.usedMemoryCriticalThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="memoryUsageThresholdForm.usedMemoryCriticalThreshold.$invalid">
+			<p class="text-danger form-control-static">{{memoryUsageThresholdForm.usedMemoryCriticalThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : memoryUsageThresholdForm.usedMemoryMajorThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Major</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="usedMemoryMajorThreshold" class="form-control" ng-model="threshold.usedMemoryMajorThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="memoryUsageThresholdForm.usedMemoryMajorThreshold.$invalid">
+			<p class="text-danger form-control-static">{{memoryUsageThresholdForm.usedMemoryMajorThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : memoryUsageThresholdForm.usedMemoryMinorThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Minor</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="usedMemoryMinorThreshold" class="form-control" ng-model="threshold.usedMemoryMinorThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="memoryUsageThresholdForm.usedMemoryMinorThreshold.$invalid">
+			<p class="text-danger form-control-static">{{memoryUsageThresholdForm.usedMemoryMinorThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-offset-4 col-lg-8">
+			<h4 class="form-control-static">Swap usage alert thresholds</h4>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : memoryUsageThresholdForm.usedSwapCriticalThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Critical</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="usedSwapCriticalThreshold" class="form-control" ng-model="threshold.usedSwapCriticalThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="memoryUsageThresholdForm.usedSwapCriticalThreshold.$invalid">
+			<p class="text-danger form-control-static">{{memoryUsageThresholdForm.usedSwapCriticalThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : memoryUsageThresholdForm.usedSwapMajorThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Major</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="usedSwapMajorThreshold" class="form-control" ng-model="threshold.usedSwapMajorThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="memoryUsageThresholdForm.usedSwapMajorThreshold.$invalid">
+			<p class="text-danger form-control-static">{{memoryUsageThresholdForm.usedSwapMajorThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : memoryUsageThresholdForm.usedSwapMinorThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Minor</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="usedSwapMinorThreshold" class="form-control" ng-model="threshold.usedSwapMinorThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="memoryUsageThresholdForm.usedSwapMinorThreshold.$invalid">
+			<p class="text-danger form-control-static">{{memoryUsageThresholdForm.usedSwapMinorThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-offset-4 col-lg-4">
+			<button type="submit" class="btn btn-default btn-block" ng-click="save(threshold)" ng-disabled="memoryUsageThresholdForm.$invalid || !isValid(threshold)">
+				Save
+			</button>
+			<alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
+				{{alert.msg}}
+			</alert>
+		</div>
+	</div>
+</form>

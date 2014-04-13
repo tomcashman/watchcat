@@ -18,6 +18,36 @@ angular.module('watchcatApp').factory('AlertThresholds',
 						id: 'loadaverage',
 						body: thresholds
 					});
+				},
+				getMemoryUsageThresholds : function(hostname) {
+					return ElasticSearch.getSource({
+						index: hostname,
+						type: esType,
+						id: 'memoryusage'
+					});
+				},
+				saveMemoryUsageThresholds : function(hostname, thresholds) {
+					return ElasticSearch.index({
+						index: hostname,
+						type: esType,
+						id: 'memoryusage',
+						body: thresholds
+					});
+				},
+				getDiskUsageThresholds : function(hostname) {
+					return ElasticSearch.getSource({
+						index: hostname,
+						type: esType,
+						id: 'filesystems'
+					});
+				},
+				saveDiskUsageThresholds : function(hostname, thresholds) {
+					return ElasticSearch.index({
+						index: hostname,
+						type: esType,
+						id: 'filesystems',
+						body: thresholds
+					});
 				}
 			};
 		} ]);
