@@ -17,7 +17,7 @@
 			<li ng-class="{active : isAlertsPage}"><a href="#/{{currentHost}}/alerts"><i class="fa fa-bell"></i></a><li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
-		<li class="dropdown" ng-show="location == 'dashboard'"><a href="#" class="dropdown-toggle"
+		<li class="dropdown" ng-show="!isAlertsPage"><a href="#" class="dropdown-toggle"
 				data-toggle="dropdown">{{timePeriods[selectedTimePeriod]}} <b class="caret"></b></a>
 				<ul class="dropdown-menu">
 					<li data-ng-repeat="timePeriod in timePeriods track by $index">
