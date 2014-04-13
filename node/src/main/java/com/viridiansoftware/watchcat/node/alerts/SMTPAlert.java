@@ -33,6 +33,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.viridiansoftware.watchcat.node.event.Criticality;
+
 /**
  * Common interface for SMTP-based alerts
  * 
@@ -44,11 +46,13 @@ public class SMTPAlert {
 	private Properties smtpHostProperties;
 	private String smtpUsername;
 	private String smtpPassword;
+	private Criticality criticality;
 
 	public SMTPAlert(Properties smtpHostProperties, String smtpUsername,
-			String smtpPassword, String hostname, String message) {
+			String smtpPassword, String hostname, Criticality criticality, String message) {
 		this.hostname = hostname;
 		this.message = message;
+		this.criticality = criticality;
 
 		this.smtpHostProperties = smtpHostProperties;
 		this.smtpUsername = smtpUsername;
@@ -76,8 +80,8 @@ public class SMTPAlert {
 			message.setFrom(new InternetAddress("from-email@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(emailAddress));
-			message.setSubject("watchcat [" + hostname + "] " + this.message);
-			message.setText("[" + hostname + "] " + this.message);
+			message.setSubject("watchcat [" + hostname + "][" + this.criticality + "] " + this.message);
+			message.setText(this.criticality + " alert from '" + hostname + "'\n" + this.message);
 
 			Transport.send(message);
 			return true;

@@ -23,6 +23,7 @@
  */
 package com.viridiansoftware.watchcat.node.event.memoryusage;
 
+import com.viridiansoftware.watchcat.node.alerts.AlertSender;
 import com.viridiansoftware.watchcat.node.event.Criticality;
 import com.viridiansoftware.watchcat.node.event.CriticalityEvent;
 
@@ -32,29 +33,48 @@ import com.viridiansoftware.watchcat.node.event.CriticalityEvent;
  *
  * @author Thomas Cashman
  */
-public class MemoryUsageEvent implements CriticalityEvent {
+public class RAMUsageEvent implements CriticalityEvent {
+	private AlertSender alertSender;
+	private Criticality criticality;
+	private String ramUsed;
+	
+	public RAMUsageEvent(AlertSender alertSender) {
+		this.alertSender = alertSender;
+	}
 
 	@Override
 	public void begin(Criticality criticality, String... eventParams) {
-		// TODO Auto-generated method stub
-		
+		this.criticality = criticality;
+		this.ramUsed = eventParams[0];
+		alert();
 	}
 
 	@Override
 	public void end(String... eventParams) {
-		// TODO Auto-generated method stub
-		
+		this.criticality = Criticality.CLEAR;
+		alert();
 	}
 
 	@Override
 	public void updateStatus(Criticality criticality, String... eventParams) {
-		// TODO Auto-generated method stub
-		
+		if(this.criticality != criticality) {
+			this.criticality = criticality;
+			this.ramUsed = eventParams[0];
+			alert();
+		}
 	}
 
 	@Override
 	public void alert() {
-		// TODO Auto-generated method stub
-		
+		String alertMessage;
+		switch (criticality) {
+		case CLEAR:
+			alertMessage = "RAM usage has returned to normal";
+			break;
+		default:
+			alertMessage = "RAM usage has reached " + ramUsed + "% used";
+			break;
+		}
+		alertSender.sendAlert(criticality, alertMessage);
 	}
 }

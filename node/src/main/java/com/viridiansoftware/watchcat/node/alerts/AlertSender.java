@@ -84,9 +84,9 @@ public class AlertSender {
 		alertLogger.log(transportClient);
 
 		List<String> emailAlertRecipients = this.emailAddresses.get();
-		if (emailAlertRecipients.size() > 0) {
+		if (emailAlertRecipients.size() > 0 && smtpHost != null && smtpHost.length() > 0) {
 			SMTPAlert smtpAlert = new SMTPAlert(smtpHostProperties,
-					smtpUsername, smtpPassword, hostname, message);
+					smtpUsername, smtpPassword, hostname, criticality, message);
 
 			for (String emailAddress : emailAlertRecipients) {
 				if (!smtpAlert.send(emailAddress)) {

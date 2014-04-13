@@ -48,20 +48,17 @@ public class ThresholdInitializer {
 	private String hostname;
 
 	@Autowired
-	private BandwidthThresholds bandwidthThresholds;
-	@Autowired
-	private FilesystemThresholds diskUsageThresholds;
+	private FilesystemThresholds filesystemThresholds;
 	@Autowired
 	private LoadAverageThresholds loadAverageThresholds;
 	@Autowired
 	private MemoryUsageThresholds memoryUsageThresholds;
-	@Autowired
-	private NetworkConnectionsThresholds networkConnectionsThresholds;
 
 	public void initializeThresholds() {
 		checkHostnameIndex();
 		checkLoadAverageThresholds();
 		checkMemoryUsageThresholds();
+		checkDiskUsageThresholds();
 	}
 
 	private void checkHostnameIndex() {
@@ -98,6 +95,40 @@ public class ThresholdInitializer {
 	}
 
 	private void checkMemoryUsageThresholds() {
-
+		GetResponse response = transportClient
+				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
+						ElasticSearchConstants.MEMORY_USAGE).execute()
+				.actionGet();
+		if (!response.isExists() || response.isSourceEmpty()) {
+			IndexResponse indexResponse = transportClient
+					.prepareIndex(hostname,
+							ElasticSearchConstants.THRESHOLD_TYPE,
+							ElasticSearchConstants.MEMORY_USAGE)
+					.setSource(memoryUsageThresholds.toJson()).execute()
+					.actionGet();
+			
+			if(!indexResponse.isCreated()) {
+				//TODO: Alert unable to contact ElasticSearch
+			}
+		}
+	}
+	
+	private void checkDiskUsageThresholds() {
+		GetResponse response = transportClient
+				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
+						ElasticSearchConstants.FILESYSTEMS).execute()
+				.actionGet();
+		if (!response.isExists() || response.isSourceEmpty()) {
+			IndexResponse indexResponse = transportClient
+					.prepareIndex(hostname,
+							ElasticSearchConstants.THRESHOLD_TYPE,
+							ElasticSearchConstants.FILESYSTEMS)
+					.setSource(filesystemThresholds.toJson()).execute()
+					.actionGet();
+			
+			if(!indexResponse.isCreated()) {
+				//TODO: Alert unable to contact ElasticSearch
+			}
+		}
 	}
 }

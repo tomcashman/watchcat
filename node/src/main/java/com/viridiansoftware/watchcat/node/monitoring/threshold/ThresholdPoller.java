@@ -52,15 +52,11 @@ public class ThresholdPoller implements Runnable {
 	private String hostname;
 
 	@Autowired
-	private BandwidthThresholds bandwidthThresholds;
-	@Autowired
 	private FilesystemThresholds diskUsageThresholds;
 	@Autowired
 	private LoadAverageThresholds loadAverageThresholds;
 	@Autowired
 	private MemoryUsageThresholds memoryUsageThresholds;
-	@Autowired
-	private NetworkConnectionsThresholds networkConnectionsThresholds;
 
 	@Autowired
 	private ThresholdInitializer thresholdInitializer;
@@ -75,6 +71,8 @@ public class ThresholdPoller implements Runnable {
 	@Override
 	public void run() {
 		pollLoadAverageThresholds();
+		pollMemoryUsageThresholds();
+		pollDiskUsageThresholds();
 	}
 
 	private void pollLoadAverageThresholds() {
@@ -83,5 +81,21 @@ public class ThresholdPoller implements Runnable {
 						ElasticSearchConstants.LOAD_AVERAGE).execute()
 				.actionGet();
 		loadAverageThresholds.fromJson(getResponse);
+	}
+	
+	private void pollMemoryUsageThresholds() {
+		GetResponse getResponse = transportClient
+				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
+						ElasticSearchConstants.MEMORY_USAGE).execute()
+				.actionGet();
+		memoryUsageThresholds.fromJson(getResponse);
+	}
+	
+	private void pollDiskUsageThresholds() {
+		GetResponse getResponse = transportClient
+				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
+						ElasticSearchConstants.FILESYSTEMS).execute()
+				.actionGet();
+		diskUsageThresholds.fromJson(getResponse);
 	}
 }

@@ -23,8 +23,12 @@
  */
 package com.viridiansoftware.watchcat.node.monitoring.threshold;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
 import com.viridiansoftware.watchcat.node.metrics.domain.Filesystem;
@@ -41,9 +45,32 @@ public class FilesystemThresholds {
 	private AtomicInteger criticalThreshold;
 	
 	public FilesystemThresholds() {
-		minorThreshold = new AtomicInteger(100);
-		majorThreshold = new AtomicInteger(100);
-		criticalThreshold = new AtomicInteger(100);
+		minorThreshold = new AtomicInteger(80);
+		majorThreshold = new AtomicInteger(90);
+		criticalThreshold = new AtomicInteger(95);
+	}
+	
+	public XContentBuilder toJson() {
+		try {
+			XContentBuilder builder = XContentFactory.jsonBuilder();
+			builder = builder.startObject();
+			builder = builder.field("minorThreshold", getMinorThreshold());
+			builder = builder.field("majorThreshold", getMajorThreshold());
+			builder = builder.field("criticalThreshold", getCriticalThreshold());
+			builder = builder.endObject();
+			return builder;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public void fromJson(GetResponse response) {
+		Map<String, Object> values = response.getSourceAsMap();
+		
+		minorThreshold.set(Integer.parseInt(values.get("minorThreshold").toString()));
+		majorThreshold.set(Integer.parseInt(values.get("majorThreshold").toString()));
+		criticalThreshold.set(Integer.parseInt(values.get("criticalThreshold").toString()));
 	}
 
 	public int getMinorThreshold() {

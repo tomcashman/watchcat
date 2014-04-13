@@ -23,8 +23,12 @@
  */
 package com.viridiansoftware.watchcat.node.monitoring.threshold;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
 
 import com.viridiansoftware.watchcat.node.metrics.MemoryUsage;
@@ -36,24 +40,96 @@ import com.viridiansoftware.watchcat.node.metrics.MemoryUsage;
  */
 @Component
 public class MemoryUsageThresholds {
-	private AtomicInteger usedMemoryPercentageThreshold;
-	private AtomicInteger usedSwapPercentageThreshold;
+	private AtomicInteger usedMemoryMinorThreshold, usedMemoryMajorThreshold, usedMemoryCriticalThreshold;
+	private AtomicInteger usedSwapMinorThreshold, usedSwapMajorThreshold, usedSwapCriticalThreshold;
 	
-	public int getUsedMemoryPercentageThreshold() {
-		return usedMemoryPercentageThreshold.get();
+	public MemoryUsageThresholds() {
+		usedMemoryMinorThreshold = new AtomicInteger(80);
+		usedMemoryMajorThreshold = new AtomicInteger(90);
+		usedMemoryCriticalThreshold = new AtomicInteger(95);
+		
+		usedSwapMinorThreshold = new AtomicInteger(80);
+		usedSwapMajorThreshold = new AtomicInteger(90);
+		usedSwapCriticalThreshold = new AtomicInteger(95);
 	}
 	
-	public void setUsedMemoryPercentageThreshold(
-			int usedMemoryPercentageThreshold) {
-		this.usedMemoryPercentageThreshold.set(usedMemoryPercentageThreshold);
+	public void fromJson(GetResponse response) {
+		Map<String, Object> values = response.getSourceAsMap();
+		
+		usedMemoryMinorThreshold.set(Integer.parseInt(values.get("usedMemoryMinorThreshold").toString()));
+		usedMemoryMajorThreshold.set(Integer.parseInt(values.get("usedMemoryMajorThreshold").toString()));
+		usedMemoryCriticalThreshold.set(Integer.parseInt(values.get("usedMemoryCriticalThreshold").toString()));
+		
+		usedSwapMinorThreshold.set(Integer.parseInt(values.get("usedSwapMinorThreshold").toString()));
+		usedSwapMajorThreshold.set(Integer.parseInt(values.get("usedSwapMajorThreshold").toString()));
+		usedSwapCriticalThreshold.set(Integer.parseInt(values.get("usedSwapCriticalThreshold").toString()));
 	}
 	
-	public int getUsedSwapPercentageThreshold() {
-		return usedSwapPercentageThreshold.get();
+	public XContentBuilder toJson() {
+		try {
+			XContentBuilder builder = XContentFactory.jsonBuilder();
+			builder = builder.startObject();
+			builder = builder.field("usedMemoryMinorThreshold", getUsedMemoryMinorThreshold());
+			builder = builder.field("usedMemoryMajorThreshold", getUsedMemoryMajorThreshold());
+			builder = builder.field("usedMemoryCriticalThreshold", getUsedMemoryCriticalThreshold());
+			
+			builder = builder.field("usedSwapMinorThreshold", getUsedSwapMinorThreshold());
+			builder = builder.field("usedSwapMajorThreshold", getUsedSwapMajorThreshold());
+			builder = builder.field("usedSwapCriticalThreshold", getUsedSwapCriticalThreshold());
+			builder = builder.endObject();
+			return builder;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
-	
-	public void setUsedSwapPercentageThreshold(
-			int usedSwapPercentageThreshold) {
-		this.usedSwapPercentageThreshold.set(usedSwapPercentageThreshold);
+
+	public int getUsedMemoryMinorThreshold() {
+		return usedMemoryMinorThreshold.get();
+	}
+
+	public void setUsedMemoryMinorThreshold(int usedMemoryMinorThreshold) {
+		this.usedMemoryMinorThreshold.set(usedMemoryMinorThreshold);
+	}
+
+	public int getUsedMemoryMajorThreshold() {
+		return usedMemoryMajorThreshold.get();
+	}
+
+	public void setUsedMemoryMajorThreshold(int usedMemoryMajorThreshold) {
+		this.usedMemoryMajorThreshold.set(usedMemoryMajorThreshold);
+	}
+
+	public int getUsedMemoryCriticalThreshold() {
+		return usedMemoryCriticalThreshold.get();
+	}
+
+	public void setUsedMemoryCriticalThreshold(
+			int usedMemoryCriticalThreshold) {
+		this.usedMemoryCriticalThreshold.set(usedMemoryCriticalThreshold);
+	}
+
+	public int getUsedSwapMinorThreshold() {
+		return usedSwapMinorThreshold.get();
+	}
+
+	public void setUsedSwapMinorThreshold(int usedSwapMinorThreshold) {
+		this.usedSwapMinorThreshold.set(usedSwapMinorThreshold);
+	}
+
+	public int getUsedSwapMajorThreshold() {
+		return usedSwapMajorThreshold.get();
+	}
+
+	public void setUsedSwapMajorThreshold(int usedSwapMajorThreshold) {
+		this.usedSwapMajorThreshold.set(usedSwapMajorThreshold);
+	}
+
+	public int getUsedSwapCriticalThreshold() {
+		return usedSwapCriticalThreshold.get();
+	}
+
+	public void setUsedSwapCriticalThreshold(int usedSwapCriticalThreshold) {
+		this.usedSwapCriticalThreshold.set(usedSwapCriticalThreshold);
 	}
 }

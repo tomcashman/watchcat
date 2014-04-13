@@ -75,19 +75,19 @@ public class LoadAverageMonitor implements Runnable {
 	}
 
 	private void checkOneMinuteAverage(LoadAverage loadAverage) {
-		if(loadAverage.getOneMinuteAverage() > loadAverageThresholds.getOneMinuteAverageCriticalThreshold()) {
+		if(loadAverage.getOneMinuteAverage() >= loadAverageThresholds.getOneMinuteAverageCriticalThreshold()) {
 			if(oneMinuteAverageEvent == null) {
 				beginOneMinuteAverageEvent(Criticality.CRITICAL, loadAverage.getOneMinuteAverage());
 			} else {
 				oneMinuteAverageEvent.updateStatus(Criticality.CRITICAL, String.valueOf(loadAverage.getOneMinuteAverage()));
 			}
-		} else if(loadAverage.getOneMinuteAverage() > loadAverageThresholds.getOneMinuteAverageMajorThreshold()) {
+		} else if(loadAverage.getOneMinuteAverage() >= loadAverageThresholds.getOneMinuteAverageMajorThreshold()) {
 			if(oneMinuteAverageEvent == null) {
 				beginOneMinuteAverageEvent(Criticality.MAJOR, loadAverage.getOneMinuteAverage());
 			} else {
 				oneMinuteAverageEvent.updateStatus(Criticality.MAJOR, String.valueOf(loadAverage.getOneMinuteAverage()));
 			}
-		} else if(loadAverage.getOneMinuteAverage() > loadAverageThresholds.getOneMinuteAverageMinorThreshold()) {
+		} else if(loadAverage.getOneMinuteAverage() >= loadAverageThresholds.getOneMinuteAverageMinorThreshold()) {
 			if(oneMinuteAverageEvent == null) {
 				beginOneMinuteAverageEvent(Criticality.MINOR, loadAverage.getOneMinuteAverage());
 			} else {

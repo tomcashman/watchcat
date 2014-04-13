@@ -23,6 +23,7 @@
  */
 package com.viridiansoftware.watchcat.node.event.diskusage;
 
+import com.viridiansoftware.watchcat.node.alerts.AlertSender;
 import com.viridiansoftware.watchcat.node.event.Criticality;
 import com.viridiansoftware.watchcat.node.event.CriticalityEvent;
 import com.viridiansoftware.watchcat.node.metrics.DiskUsage;
@@ -38,9 +39,11 @@ public class DiskUsageEvent implements CriticalityEvent {
 	private String filesystem;
 	private Criticality criticality;
 	private String percentageUsed;
+	private AlertSender alertSender;
 
-	public DiskUsageEvent(String filesystem) {
+	public DiskUsageEvent(AlertSender alertSender, String filesystem) {
 		this.filesystem = filesystem;
+		this.alertSender = alertSender;
 	}
 
 	@Override
@@ -74,9 +77,9 @@ public class DiskUsageEvent implements CriticalityEvent {
 					+ "' usage has returned to normal";
 			break;
 		default:
-			alertMessage = "Filesystem '" + filesystem + "' has reached a "
-					+ criticality + " level of " + percentageUsed + "% used";
+			alertMessage = "Filesystem '" + filesystem + "' is now at " + percentageUsed + "% used";
 			break;
 		}
+		alertSender.sendAlert(criticality, alertMessage);
 	}
 }
