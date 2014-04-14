@@ -67,11 +67,7 @@ public class DiskUsage implements Runnable {
 		
 		disks.set(result);
 	}
-	
-	public List<Disk> getFilesystems() {
-		return disks.get();
-	}
-	
+
 	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -115,5 +111,13 @@ public class DiskUsage implements Runnable {
 		}
 		stringBuilder.append("]");
 		return stringBuilder.toString();
+	}
+	
+	public List<Disk> getDisks() {
+		return disks.get();
+	}
+	
+	public void setDisks(LinkedList<Disk> disks) {
+		this.disks.set(disks);
 	}
 }

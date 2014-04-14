@@ -51,6 +51,8 @@ import com.viridiansoftware.watchcat.node.monitoring.threshold.DiskThresholds;
  */
 @Component
 public class DiskMonitor implements Runnable {
+	public static final int INTERVAL = 5;
+	
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
 	@Autowired
@@ -68,7 +70,7 @@ public class DiskMonitor implements Runnable {
 	
 	@PostConstruct
 	public void postConstruct() {
-		scheduledExecutorService.schedule(this, 6, TimeUnit.SECONDS);
+		scheduledExecutorService.schedule(this, INTERVAL + 1, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -76,7 +78,7 @@ public class DiskMonitor implements Runnable {
 		try {
 			DiskUsage diskUsage = metricsCollector.getDiskUsage();
 			
-			List<Disk> disks = diskUsage.getFilesystems();
+			List<Disk> disks = diskUsage.getDisks();
 			Iterator<Disk> iterator = disks.iterator();
 			while(iterator.hasNext()) {
 				Disk disk = iterator.next();
@@ -122,5 +124,30 @@ public class DiskMonitor implements Runnable {
 		DiskUsageEvent event = new DiskUsageEvent(alertSender, filesystem);
 		event.begin(criticality, String.valueOf(percentageUsed));
 		diskUsageEvents.put(filesystem, event);
+	}
+	
+	protected CriticalityEvent getDiskUsageEvent(String disk) {
+		return diskUsageEvents.get(disk);
+	}
+	
+	protected void setDiskUsageEvent(String disk, CriticalityEvent event) {
+		diskUsageEvents.put(disk, event);
+	}
+
+	protected void setMetricsCollector(LinuxMetricsCollector metricsCollector) {
+		this.metricsCollector = metricsCollector;
+	}
+
+	protected void setScheduledExecutorService(
+			ScheduledExecutorService scheduledExecutorService) {
+		this.scheduledExecutorService = scheduledExecutorService;
+	}
+
+	protected void setDiskThresholds(DiskThresholds diskThresholds) {
+		this.diskThresholds = diskThresholds;
+	}
+
+	protected void setAlertSender(AlertSender alertSender) {
+		this.alertSender = alertSender;
 	}
 }

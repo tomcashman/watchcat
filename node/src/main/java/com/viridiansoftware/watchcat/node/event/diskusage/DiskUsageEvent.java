@@ -42,8 +42,13 @@ public class DiskUsageEvent implements CriticalityEvent {
 	private AlertSender alertSender;
 
 	public DiskUsageEvent(AlertSender alertSender, String disk) {
+		this(alertSender, disk, null);
+	}
+	
+	public DiskUsageEvent(AlertSender alertSender, String disk, Criticality criticality) {
 		this.disk = disk;
 		this.alertSender = alertSender;
+		this.criticality = criticality;
 	}
 
 	@Override
