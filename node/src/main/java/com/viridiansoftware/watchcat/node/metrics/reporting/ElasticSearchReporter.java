@@ -39,6 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import com.viridiansoftware.watchcat.node.ElasticSearchConstants;
+
 /**
  * Inserts the current metrics every second into ElasticSearch
  * 
@@ -46,9 +48,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ElasticSearchReporter implements Runnable {
-	private static String WATCHCAT_INDEX = "watchcat";
-	private static String WATCHCAT_TYPE = "host";
-
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
 	@Autowired
@@ -84,9 +83,9 @@ public class ElasticSearchReporter implements Runnable {
 			XContentBuilder hostEntry = XContentFactory.jsonBuilder()
 					.startObject().field("host", hostname).endObject();
 
-			transportClient.prepareIndex(WATCHCAT_INDEX, WATCHCAT_TYPE, hostname)
+			transportClient.prepareIndex(ElasticSearchConstants.WATCHCAT_INDEX, ElasticSearchConstants.HOST_TYPE, hostname)
 					.setSource(hostEntry).execute().actionGet();
-			transportClient.admin().indices().prepareRefresh(WATCHCAT_INDEX).execute()
+			transportClient.admin().indices().prepareRefresh(ElasticSearchConstants.WATCHCAT_INDEX).execute()
 					.actionGet();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,42 +102,42 @@ public class ElasticSearchReporter implements Runnable {
 		XContentBuilder loadAverage = metricsCollector.getLoadAverage().toJson(
 				timestamp);
 		if (loadAverage != null) {
-			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, "load",
+			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.LOAD_AVERAGE,
 					timestampStr).setSource(loadAverage));
 		}
 
 		XContentBuilder memoryUsage = metricsCollector.getMemoryUsage().toJson(
 				timestamp);
 		if (memoryUsage != null) {
-			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, "memory",
+			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.MEMORY_USAGE,
 					timestampStr).setSource(memoryUsage));
 		}
 
 		XContentBuilder diskUsage = metricsCollector.getDiskUsage().toJson(
 				timestamp);
 		if (diskUsage != null) {
-			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, "disks",
+			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.DISKS,
 					timestampStr).setSource(diskUsage));
 		}
 
 		XContentBuilder bandwidth = metricsCollector.getBandwidth().toJson(
 				timestamp);
 		if (bandwidth != null) {
-			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, "bandwidth",
+			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.BANDWIDTH,
 					timestampStr).setSource(bandwidth));
 		}
 
 		XContentBuilder processes = metricsCollector.getProcesses().toJson(
 				timestamp);
 		if (processes != null) {
-			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, "processes",
+			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.PROCESSES,
 					timestampStr).setSource(processes));
 		}
 
 		XContentBuilder networkConnections = metricsCollector
 				.getNetworkConnections().toJson(timestamp);
 		if (networkConnections != null) {
-			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, "connections",
+			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.NETWORK_CONNECTIONS,
 					timestampStr).setSource(networkConnections));
 		}
 

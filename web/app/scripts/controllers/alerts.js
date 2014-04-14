@@ -206,7 +206,7 @@ angular.module('watchcatApp').controller(
 					}
 					if(thresholds.usedMemoryCriticalThreshold >= 100) {
 						this.memoryUsageThresholdForm.usedMemoryCriticalThreshold.$invalid = true;
-						this.memoryUsageThresholdForm.usedSwapMinorThreshold.errorMessage = 'Value must be less than 100';
+						this.memoryUsageThresholdForm.usedMemoryCriticalThreshold.errorMessage = 'Value must be less than 100';
 						return false;
 					}
 					
@@ -227,7 +227,7 @@ angular.module('watchcatApp').controller(
 					}
 					if(thresholds.usedSwapCriticalThreshold >= 100) {
 						this.memoryUsageThresholdForm.usedSwapCriticalThreshold.$invalid = true;
-						this.memoryUsageThresholdForm.usedSwapMinorThreshold.errorMessage = 'Value must be less than 100';
+						this.memoryUsageThresholdForm.usedSwapCriticalThreshold.errorMessage = 'Value must be less than 100';
 						return false;
 					}
 					
@@ -236,6 +236,49 @@ angular.module('watchcatApp').controller(
 				
 				$scope.save = function(thresholds) {
 					AlertThresholds.saveMemoryUsageThresholds($routeParams.host, thresholds).then(function() {
+						$scope.alerts.push({ type: 'success', msg: 'Saved successfully'});
+					}, function() {
+						$scope.alerts.push({ type: 'danger', msg: 'Could not save settings to ElasticSearch'});
+					});
+				};
+			} else if($scope.section === 'diskusage') {
+				AlertThresholds.getDiskUsageThresholds($routeParams.host).then(function(response) {
+					$scope.threshold = response;
+				}, function() {
+					
+				});
+				
+				$scope.isValid = function(thresholds) {
+					this.diskUsageThresholdForm.minorThreshold.$invalid = false;
+					this.diskUsageThresholdForm.majorThreshold.$invalid = false;
+					this.diskUsageThresholdForm.criticalThreshold.$invalid = false;
+					
+					if(thresholds.minorThreshold < 1) {
+						this.diskUsageThresholdForm.minorThreshold.$invalid = true;
+						this.diskUsageThresholdForm.minorThreshold.errorMessage = 'Value must be greater than 0';
+						return false;
+					}
+					if(thresholds.majorThreshold <= thresholds.minorThreshold) {
+						this.diskUsageThresholdForm.majorThreshold.$invalid = true;
+						this.diskUsageThresholdForm.majorThreshold.errorMessage = 'Value must be greater than minor threshold';
+						return false;
+					}
+					if(thresholds.criticalThreshold <= thresholds.majorThreshold) {
+						this.diskUsageThresholdForm.criticalThreshold.$invalid = true;
+						this.diskUsageThresholdForm.criticalThreshold.errorMessage = 'Value must be greater than major threshold';
+						return false;
+					}
+					if(thresholds.criticalThreshold >= 100) {
+						this.diskUsageThresholdForm.criticalThreshold.$invalid = true;
+						this.diskUsageThresholdForm.criticalThreshold.errorMessage = 'Value must be less than 100';
+						return false;
+					}
+					
+					return true;
+				};
+				
+				$scope.save = function(thresholds) {
+					AlertThresholds.saveDiskUsageThresholds($routeParams.host, thresholds).then(function() {
 						$scope.alerts.push({ type: 'success', msg: 'Saved successfully'});
 					}, function() {
 						$scope.alerts.push({ type: 'danger', msg: 'Could not save settings to ElasticSearch'});

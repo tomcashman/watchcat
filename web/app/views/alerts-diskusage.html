@@ -1,0 +1,53 @@
+<form name="diskUsageThresholdForm" class="form-horizontal">
+	<div class="form-group">
+		<div class="col-lg-offset-4 col-lg-8">
+			<h4 class="form-control-static">Disk usage alert thresholds</h4>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : diskUsageThresholdForm.criticalThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Critical</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="criticalThreshold" class="form-control" ng-model="threshold.criticalThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="diskUsageThresholdForm.criticalThreshold.$invalid">
+			<p class="text-danger form-control-static">{{diskUsageThresholdForm.criticalThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : diskUsageThresholdForm.majorThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Major</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="majorThreshold" class="form-control" ng-model="threshold.majorThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="diskUsageThresholdForm.majorThreshold.$invalid">
+			<p class="text-danger form-control-static">{{diskUsageThresholdForm.majorThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group" ng-class="{'has-error' : diskUsageThresholdForm.minorThreshold.$invalid}">
+		<label  class="col-lg-4 control-label">Minor</label>
+		<div class="col-lg-4">
+			<div class="input-group">
+				<input type="number" name="minorThreshold" class="form-control" ng-model="threshold.minorThreshold" step="any" required>
+				<span class="input-group-addon">%</span>
+			</div>
+		</div>
+		<div class="col-lg-4" ng-show="diskUsageThresholdForm.minorThreshold.$invalid">
+			<p class="text-danger form-control-static">{{diskUsageThresholdForm.minorThreshold.errorMessage}}</p>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-offset-4 col-lg-4">
+			<button type="submit" class="btn btn-default btn-block" ng-click="save(threshold)" ng-disabled="diskUsageThresholdForm.$invalid || !isValid(threshold)">
+				Save
+			</button>
+			<alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">
+				{{alert.msg}}
+			</alert>
+		</div>
+	</div>
+</form>

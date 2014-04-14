@@ -22,6 +22,9 @@ angular.module('watchcatApp',
 			}).when('/:host/alerts/memoryusage', {
 				templateUrl : 'views/alerts.html',
 				controller : 'AlertsCtrl'
+			}).when('/:host/alerts/diskusage', {
+				templateUrl : 'views/alerts.html',
+				controller : 'AlertsCtrl'
 			}).when('/:host/alerts', {
 				templateUrl : 'views/alerts.html',
 				controller : 'AlertsCtrl'

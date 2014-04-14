@@ -94,7 +94,7 @@ public class ThresholdPoller implements Runnable {
 	private void pollDiskUsageThresholds() {
 		GetResponse getResponse = transportClient
 				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
-						ElasticSearchConstants.FILESYSTEMS).execute()
+						ElasticSearchConstants.DISKS).execute()
 				.actionGet();
 		diskUsageThresholds.fromJson(getResponse);
 	}

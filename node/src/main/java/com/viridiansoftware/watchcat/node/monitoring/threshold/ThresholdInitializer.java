@@ -116,13 +116,13 @@ public class ThresholdInitializer {
 	private void checkDiskUsageThresholds() {
 		GetResponse response = transportClient
 				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
-						ElasticSearchConstants.FILESYSTEMS).execute()
+						ElasticSearchConstants.DISKS).execute()
 				.actionGet();
 		if (!response.isExists() || response.isSourceEmpty()) {
 			IndexResponse indexResponse = transportClient
 					.prepareIndex(hostname,
 							ElasticSearchConstants.THRESHOLD_TYPE,
-							ElasticSearchConstants.FILESYSTEMS)
+							ElasticSearchConstants.DISKS)
 					.setSource(diskThresholds.toJson()).execute()
 					.actionGet();
 			

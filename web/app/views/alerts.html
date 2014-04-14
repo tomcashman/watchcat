@@ -7,6 +7,7 @@
 		<div class="list-group">
 		  <a class="list-group-item" ng-class="{active : section == 'loadaverage'}" href="#{{urlPrefix}}/loadaverage">Load Average</a>
 		  <a class="list-group-item" ng-class="{active : section == 'memoryusage'}" href="#{{urlPrefix}}/memoryusage">Memory Usage</a>
+		  <a class="list-group-item" ng-class="{active : section == 'diskusage'}" href="#{{urlPrefix}}/diskusage">Disk Usage</a>
 		</div>
 		<h3>Alert Destinations</h3>
 		<div class="list-group">
@@ -28,6 +29,11 @@
 		<div class="panel panel-default" ng-switch-when="memoryusage">
 		  <div class="panel-heading">Memory Usage Alert Thresholds</div>
 		  <div class="panel-body" ng-include src="'views/alerts-memoryusage.html'">
+		  </div>
+		</div>
+		<div class="panel panel-default" ng-switch-when="diskusage">
+		  <div class="panel-heading">Disk Usage Alert Thresholds</div>
+		  <div class="panel-body" ng-include src="'views/alerts-diskusage.html'">
 		  </div>
 		</div>
 		<div class="panel panel-default" ng-switch-when="emailaddresses">

@@ -8,14 +8,14 @@ angular.module('watchcatApp').factory('AlertThresholds',
 					return ElasticSearch.getSource({
 						index: hostname,
 						type: esType,
-						id: 'loadaverage'
+						id: 'load'
 					});
 				},
 				saveLoadAverageThresholds : function(hostname, thresholds) {
 					return ElasticSearch.index({
 						index: hostname,
 						type: esType,
-						id: 'loadaverage',
+						id: 'load',
 						body: thresholds
 					});
 				},
@@ -23,14 +23,14 @@ angular.module('watchcatApp').factory('AlertThresholds',
 					return ElasticSearch.getSource({
 						index: hostname,
 						type: esType,
-						id: 'memoryusage'
+						id: 'memory'
 					});
 				},
 				saveMemoryUsageThresholds : function(hostname, thresholds) {
 					return ElasticSearch.index({
 						index: hostname,
 						type: esType,
-						id: 'memoryusage',
+						id: 'memory',
 						body: thresholds
 					});
 				},
@@ -38,14 +38,14 @@ angular.module('watchcatApp').factory('AlertThresholds',
 					return ElasticSearch.getSource({
 						index: hostname,
 						type: esType,
-						id: 'filesystems'
+						id: 'disks'
 					});
 				},
 				saveDiskUsageThresholds : function(hostname, thresholds) {
 					return ElasticSearch.index({
 						index: hostname,
 						type: esType,
-						id: 'filesystems',
+						id: 'disks',
 						body: thresholds
 					});
 				}
