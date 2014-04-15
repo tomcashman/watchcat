@@ -40,6 +40,11 @@ public class SwapUsageEvent implements CriticalityEvent {
 	public SwapUsageEvent(AlertSender alertSender) {
 		this.alertSender = alertSender;
 	}
+	
+	public SwapUsageEvent(AlertSender alertSender, Criticality criticality) {
+		this.alertSender = alertSender;
+		this.criticality = criticality;
+	}
 
 	@Override
 	public void begin(Criticality criticality, String... eventParams) {

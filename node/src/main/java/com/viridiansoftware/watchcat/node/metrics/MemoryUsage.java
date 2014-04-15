@@ -69,22 +69,6 @@ public class MemoryUsage implements Runnable {
 		usedSwap.set(Integer.parseInt(swap[2]));
 	}
 	
-	public int getTotalMemory() {
-		return totalMemory.get();
-	}
-	
-	public int getTotalSwap() {
-		return totalSwap.get();
-	}
-	
-	public int getUsedMemory() {
-		return usedMemory.get();
-	}
-	
-	public int getUsedSwap() {
-		return usedSwap.get();
-	}
-	
 	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
@@ -107,5 +91,37 @@ public class MemoryUsage implements Runnable {
 		return "MemoryUsage [totalMemory=" + totalMemory.get() + "mb, totalSwap="
 				+ totalSwap.get() + "mb, usedMemory=" + usedMemory.get() + "mb, usedSwap="
 				+ usedSwap.get() + "mb]";
+	}
+
+	public int getTotalMemory() {
+		return totalMemory.get();
+	}
+
+	public void setTotalMemory(int totalMemory) {
+		this.totalMemory.set(totalMemory);
+	}
+
+	public int getTotalSwap() {
+		return totalSwap.get();
+	}
+
+	public void setTotalSwap(int totalSwap) {
+		this.totalSwap.set(totalSwap);
+	}
+
+	public int getUsedMemory() {
+		return usedMemory.get();
+	}
+
+	public void setUsedMemory(int usedMemory) {
+		this.usedMemory.set(usedMemory);
+	}
+
+	public int getUsedSwap() {
+		return usedSwap.get();
+	}
+
+	public void setUsedSwap(int usedSwap) {
+		this.usedSwap.set(usedSwap);
 	}
 }

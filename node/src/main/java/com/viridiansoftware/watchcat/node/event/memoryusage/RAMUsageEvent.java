@@ -41,6 +41,11 @@ public class RAMUsageEvent implements CriticalityEvent {
 	public RAMUsageEvent(AlertSender alertSender) {
 		this.alertSender = alertSender;
 	}
+	
+	public RAMUsageEvent(AlertSender alertSender, Criticality criticality) {
+		this.alertSender = alertSender;
+		this.criticality = criticality;
+	}
 
 	@Override
 	public void begin(Criticality criticality, String... eventParams) {

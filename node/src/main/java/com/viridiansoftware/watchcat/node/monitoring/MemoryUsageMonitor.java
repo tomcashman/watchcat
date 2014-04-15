@@ -46,6 +46,8 @@ import com.viridiansoftware.watchcat.node.monitoring.threshold.MemoryUsageThresh
  */
 @Component
 public class MemoryUsageMonitor implements Runnable {
+	public static final int INTERVAL = 5;
+	
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
 	@Autowired
@@ -60,24 +62,25 @@ public class MemoryUsageMonitor implements Runnable {
 	
 	@PostConstruct
 	public void postConstruct() {
-		scheduledExecutorService.schedule(this, 6, TimeUnit.SECONDS);
+		scheduledExecutorService.schedule(this, INTERVAL + 1, TimeUnit.SECONDS);
 	}
 
 	@Override
 	public void run() {
 		try {
-			checkRAMUsage();
-			checkSwapUsage();
+			MemoryUsage memoryUsage = metricsCollector.getMemoryUsage();
+			checkRAMUsage(memoryUsage);
+			checkSwapUsage(memoryUsage);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		scheduledExecutorService.schedule(this, 5, TimeUnit.SECONDS);
+		scheduledExecutorService.schedule(this, INTERVAL, TimeUnit.SECONDS);
 	}
 
-	private void checkRAMUsage() {
-		MemoryUsage memoryUsage = metricsCollector.getMemoryUsage();
-		
-		double ramUsed = memoryUsage.getUsedMemory() / memoryUsage.getTotalMemory();
+	private void checkRAMUsage(MemoryUsage memoryUsage) {
+		double used = memoryUsage.getUsedMemory();
+		double total = memoryUsage.getTotalMemory();
+		double ramUsed = (used / total) * 100;
 		if(ramUsed >= memoryUsageThresholds.getUsedMemoryCriticalThreshold()) {
 			if(ramUsageEvent == null) {
 				beginRamUsageEvent(Criticality.CRITICAL, ramUsed);
@@ -107,10 +110,10 @@ public class MemoryUsageMonitor implements Runnable {
 		ramUsageEvent.begin(criticality, String.valueOf(ramUsed));
 	}
 	
-	private void checkSwapUsage() {
-		MemoryUsage memoryUsage = metricsCollector.getMemoryUsage();
-		
-		double swapUsed = memoryUsage.getUsedSwap() / memoryUsage.getTotalSwap();
+	private void checkSwapUsage(MemoryUsage memoryUsage) {
+		double used = memoryUsage.getUsedSwap();
+		double total = memoryUsage.getTotalSwap();
+		double swapUsed = (used / total) * 100;
 		if(swapUsed >= memoryUsageThresholds.getUsedSwapCriticalThreshold()) {
 			if(swapUsageEvent == null) {
 				beginSwapUsageEvent(Criticality.CRITICAL, swapUsed);
@@ -138,5 +141,38 @@ public class MemoryUsageMonitor implements Runnable {
 	private void beginSwapUsageEvent(Criticality criticality, double swapUsed) {
 		swapUsageEvent = new SwapUsageEvent(alertSender);
 		swapUsageEvent.begin(criticality, String.valueOf(swapUsed));
+	}
+
+	public RAMUsageEvent getRamUsageEvent() {
+		return ramUsageEvent;
+	}
+
+	public void setRamUsageEvent(RAMUsageEvent ramUsageEvent) {
+		this.ramUsageEvent = ramUsageEvent;
+	}
+
+	public SwapUsageEvent getSwapUsageEvent() {
+		return swapUsageEvent;
+	}
+
+	public void setSwapUsageEvent(SwapUsageEvent swapUsageEvent) {
+		this.swapUsageEvent = swapUsageEvent;
+	}
+
+	public void setMetricsCollector(LinuxMetricsCollector metricsCollector) {
+		this.metricsCollector = metricsCollector;
+	}
+
+	public void setScheduledExecutorService(
+			ScheduledExecutorService scheduledExecutorService) {
+		this.scheduledExecutorService = scheduledExecutorService;
+	}
+
+	public void setAlertSender(AlertSender alertSender) {
+		this.alertSender = alertSender;
+	}
+
+	public void setMemoryUsageThresholds(MemoryUsageThresholds memoryUsageThresholds) {
+		this.memoryUsageThresholds = memoryUsageThresholds;
 	}
 }
