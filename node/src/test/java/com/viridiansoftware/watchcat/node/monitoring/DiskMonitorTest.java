@@ -209,7 +209,8 @@ public class DiskMonitorTest {
 		disk = new Disk(DISK_NAME, 100, 85, 15, 85, DISK_MOUNT_POINT);
 		diskUsage.getDisks().add(disk);
 		
-		diskMonitor.setDiskUsageEvent(DISK_NAME, new DiskUsageEvent(alertSender, DISK_NAME, Criticality.MAJOR));
+		DiskUsageEvent diskUsageEvent = new DiskUsageEvent(alertSender, DISK_NAME, Criticality.MAJOR);
+		diskMonitor.setDiskUsageEvent(DISK_NAME, diskUsageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -225,7 +226,7 @@ public class DiskMonitorTest {
 		diskMonitor.run();
 		
 		CriticalityEvent event = diskMonitor.getDiskUsageEvent(DISK_NAME);
-		Assert.assertEquals(true, event != null);
+		Assert.assertEquals(diskUsageEvent, event);
 	}
 
 	@Test
@@ -233,7 +234,8 @@ public class DiskMonitorTest {
 		disk = new Disk(DISK_NAME, 100, 90, 10, 90, DISK_MOUNT_POINT);
 		diskUsage.getDisks().add(disk);
 		
-		diskMonitor.setDiskUsageEvent(DISK_NAME, new DiskUsageEvent(alertSender, DISK_NAME, Criticality.CRITICAL));
+		DiskUsageEvent diskUsageEvent = new DiskUsageEvent(alertSender, DISK_NAME, Criticality.CRITICAL);
+		diskMonitor.setDiskUsageEvent(DISK_NAME, diskUsageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -249,7 +251,7 @@ public class DiskMonitorTest {
 		diskMonitor.run();
 		
 		CriticalityEvent event = diskMonitor.getDiskUsageEvent(DISK_NAME);
-		Assert.assertEquals(true, event != null);
+		Assert.assertEquals(diskUsageEvent, event);
 	}
 
 	@Test
@@ -257,7 +259,8 @@ public class DiskMonitorTest {
 		disk = new Disk(DISK_NAME, 100, 90, 10, 90, DISK_MOUNT_POINT);
 		diskUsage.getDisks().add(disk);
 		
-		diskMonitor.setDiskUsageEvent(DISK_NAME, new DiskUsageEvent(alertSender, DISK_NAME, Criticality.MINOR));
+		DiskUsageEvent diskUsageEvent = new DiskUsageEvent(alertSender, DISK_NAME, Criticality.MINOR);
+		diskMonitor.setDiskUsageEvent(DISK_NAME, diskUsageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -273,7 +276,7 @@ public class DiskMonitorTest {
 		diskMonitor.run();
 		
 		CriticalityEvent event = diskMonitor.getDiskUsageEvent(DISK_NAME);
-		Assert.assertEquals(true, event != null);
+		Assert.assertEquals(diskUsageEvent, event);
 	}
 
 	@Test
@@ -281,7 +284,8 @@ public class DiskMonitorTest {
 		disk = new Disk(DISK_NAME, 100, 95, 5, 95, DISK_MOUNT_POINT);
 		diskUsage.getDisks().add(disk);
 		
-		diskMonitor.setDiskUsageEvent(DISK_NAME, new DiskUsageEvent(alertSender, DISK_NAME, Criticality.MAJOR));
+		DiskUsageEvent diskUsageEvent = new DiskUsageEvent(alertSender, DISK_NAME, Criticality.MAJOR);
+		diskMonitor.setDiskUsageEvent(DISK_NAME, diskUsageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -297,6 +301,6 @@ public class DiskMonitorTest {
 		diskMonitor.run();
 		
 		CriticalityEvent event = diskMonitor.getDiskUsageEvent(DISK_NAME);
-		Assert.assertEquals(true, event != null);
+		Assert.assertEquals(diskUsageEvent, event);
 	}
 }
