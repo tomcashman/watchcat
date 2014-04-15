@@ -91,6 +91,18 @@ public class LoadAverage implements Runnable {
 		return fifteenMinuteAverage.get();
 	}
 	
+	public void setOneMinuteAverage(double oneMinuteAverage) {
+		this.oneMinuteAverage.set(oneMinuteAverage);
+	}
+
+	public void setFiveMinuteAverage(double fiveMinuteAverage) {
+		this.fiveMinuteAverage.set(fiveMinuteAverage);
+	}
+
+	public void setFifteenMinuteAverage(double fifteenMinuteAverage) {
+		this.fifteenMinuteAverage.set(fifteenMinuteAverage);
+	}
+
 	public XContentBuilder toJson(long timestamp) {
 		try {
 			XContentBuilder builder = XContentFactory.jsonBuilder();

@@ -44,6 +44,12 @@ public class LoadAverageEvent implements CriticalityEvent {
 		this.alertSender = alertSender;
 		this.minutePeriod = minutePeriod;
 	}
+	
+	public LoadAverageEvent(AlertSender alertSender, int minutePeriod, Criticality criticality) {
+		this.alertSender = alertSender;
+		this.minutePeriod = minutePeriod;
+		this.criticality = criticality;
+	}
 
 	@Override
 	public void begin(Criticality criticality, String... eventParams) {

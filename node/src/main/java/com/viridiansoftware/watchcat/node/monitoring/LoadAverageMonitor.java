@@ -45,6 +45,8 @@ import com.viridiansoftware.watchcat.node.monitoring.threshold.LoadAverageThresh
  */
 @Component
 public class LoadAverageMonitor implements Runnable {
+	public static final int INTERVAL = 5;
+	
 	@Autowired
 	private LinuxMetricsCollector metricsCollector;
 	@Autowired
@@ -58,7 +60,7 @@ public class LoadAverageMonitor implements Runnable {
 	
 	@PostConstruct
 	public void postConstruct() {
-		scheduledExecutorService.schedule(this, 6, TimeUnit.SECONDS);
+		scheduledExecutorService.schedule(this, INTERVAL + 1, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public class LoadAverageMonitor implements Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		scheduledExecutorService.schedule(this, 5, TimeUnit.SECONDS);
+		scheduledExecutorService.schedule(this, INTERVAL, TimeUnit.SECONDS);
 	}
 
 	private void checkOneMinuteAverage(LoadAverage loadAverage) {
@@ -105,19 +107,19 @@ public class LoadAverageMonitor implements Runnable {
 	}
 	
 	private void checkFiveMinuteAverage(LoadAverage loadAverage) {
-		if(loadAverage.getFiveMinuteAverage() > loadAverageThresholds.getFiveMinuteAverageCriticalThreshold()) {
+		if(loadAverage.getFiveMinuteAverage() >= loadAverageThresholds.getFiveMinuteAverageCriticalThreshold()) {
 			if(fiveMinuteAverageEvent == null) {
 				beginFiveMinuteAverageEvent(Criticality.CRITICAL, loadAverage.getFiveMinuteAverage());
 			} else {
 				fiveMinuteAverageEvent.updateStatus(Criticality.CRITICAL, String.valueOf(loadAverage.getFiveMinuteAverage()));
 			}
-		} else if(loadAverage.getFiveMinuteAverage() > loadAverageThresholds.getFiveMinuteAverageMajorThreshold()) {
+		} else if(loadAverage.getFiveMinuteAverage() >= loadAverageThresholds.getFiveMinuteAverageMajorThreshold()) {
 			if(fiveMinuteAverageEvent == null) {
 				beginFiveMinuteAverageEvent(Criticality.MAJOR, loadAverage.getFiveMinuteAverage());
 			} else {
 				fiveMinuteAverageEvent.updateStatus(Criticality.MAJOR, String.valueOf(loadAverage.getFiveMinuteAverage()));
 			}
-		} else if(loadAverage.getFiveMinuteAverage() > loadAverageThresholds.getFiveMinuteAverageMinorThreshold()) {
+		} else if(loadAverage.getFiveMinuteAverage() >= loadAverageThresholds.getFiveMinuteAverageMinorThreshold()) {
 			if(fiveMinuteAverageEvent == null) {
 				beginFiveMinuteAverageEvent(Criticality.MINOR, loadAverage.getFiveMinuteAverage());
 			} else {
@@ -135,19 +137,19 @@ public class LoadAverageMonitor implements Runnable {
 	}
 	
 	private void checkFifteenMinuteAverage(LoadAverage loadAverage) {
-		if(loadAverage.getFifteenMinuteAverage() > loadAverageThresholds.getFifteenMinuteAverageCriticalThreshold()) {
+		if(loadAverage.getFifteenMinuteAverage() >= loadAverageThresholds.getFifteenMinuteAverageCriticalThreshold()) {
 			if(fifteenMinuteAverageEvent == null) {
 				beginFifteenMinuteAverageEvent(Criticality.CRITICAL, loadAverage.getFifteenMinuteAverage());
 			} else {
 				fifteenMinuteAverageEvent.updateStatus(Criticality.CRITICAL, String.valueOf(loadAverage.getFifteenMinuteAverage()));
 			}
-		} else if(loadAverage.getFifteenMinuteAverage() > loadAverageThresholds.getFifteenMinuteAverageMajorThreshold()) {
+		} else if(loadAverage.getFifteenMinuteAverage() >= loadAverageThresholds.getFifteenMinuteAverageMajorThreshold()) {
 			if(fifteenMinuteAverageEvent == null) {
 				beginFifteenMinuteAverageEvent(Criticality.MAJOR, loadAverage.getFifteenMinuteAverage());
 			} else {
 				fifteenMinuteAverageEvent.updateStatus(Criticality.MAJOR, String.valueOf(loadAverage.getFifteenMinuteAverage()));				
 			}
-		} else if(loadAverage.getFifteenMinuteAverage() > loadAverageThresholds.getFifteenMinuteAverageMinorThreshold()) {
+		} else if(loadAverage.getFifteenMinuteAverage() >= loadAverageThresholds.getFifteenMinuteAverageMinorThreshold()) {
 			if(fifteenMinuteAverageEvent == null) {
 				beginFifteenMinuteAverageEvent(Criticality.MINOR, loadAverage.getFifteenMinuteAverage());
 			} else {
@@ -162,5 +164,47 @@ public class LoadAverageMonitor implements Runnable {
 	private void beginFifteenMinuteAverageEvent(Criticality criticality, double loadAverage) {
 		fifteenMinuteAverageEvent = new LoadAverageEvent(alertSender, 15);
 		fifteenMinuteAverageEvent.begin(criticality, String.valueOf(loadAverage));
+	}
+
+	public void setMetricsCollector(LinuxMetricsCollector metricsCollector) {
+		this.metricsCollector = metricsCollector;
+	}
+
+	public void setScheduledExecutorService(
+			ScheduledExecutorService scheduledExecutorService) {
+		this.scheduledExecutorService = scheduledExecutorService;
+	}
+
+	public void setLoadAverageThresholds(LoadAverageThresholds loadAverageThresholds) {
+		this.loadAverageThresholds = loadAverageThresholds;
+	}
+
+	public void setAlertSender(AlertSender alertSender) {
+		this.alertSender = alertSender;
+	}
+
+	public LoadAverageEvent getOneMinuteAverageEvent() {
+		return oneMinuteAverageEvent;
+	}
+
+	public void setOneMinuteAverageEvent(LoadAverageEvent oneMinuteAverageEvent) {
+		this.oneMinuteAverageEvent = oneMinuteAverageEvent;
+	}
+
+	public LoadAverageEvent getFiveMinuteAverageEvent() {
+		return fiveMinuteAverageEvent;
+	}
+
+	public void setFiveMinuteAverageEvent(LoadAverageEvent fiveMinuteAverageEvent) {
+		this.fiveMinuteAverageEvent = fiveMinuteAverageEvent;
+	}
+
+	public LoadAverageEvent getFifteenMinuteAverageEvent() {
+		return fifteenMinuteAverageEvent;
+	}
+
+	public void setFifteenMinuteAverageEvent(
+			LoadAverageEvent fifteenMinuteAverageEvent) {
+		this.fifteenMinuteAverageEvent = fifteenMinuteAverageEvent;
 	}
 }

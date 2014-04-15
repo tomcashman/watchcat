@@ -50,6 +50,22 @@ public class LoadAverageThresholds {
 	@Autowired
 	private LoadAverage loadAverage;
 	
+	public LoadAverageThresholds() {}
+	
+	public LoadAverageThresholds(double initialMinorValue) {
+		oneMinuteAverageCriticalThreshold = new AtomicDouble(initialMinorValue + 0.2d);
+		oneMinuteAverageMajorThreshold = new AtomicDouble(initialMinorValue + 0.1d);
+		oneMinuteAverageMinorThreshold = new AtomicDouble(initialMinorValue);
+		
+		fiveMinuteAverageCriticalThreshold = new AtomicDouble(initialMinorValue + 0.2d);
+		fiveMinuteAverageMajorThreshold = new AtomicDouble(initialMinorValue + 0.1d);
+		fiveMinuteAverageMinorThreshold = new AtomicDouble(initialMinorValue);
+		
+		fifteenMinuteAverageCriticalThreshold = new AtomicDouble(initialMinorValue + 0.2d);
+		fifteenMinuteAverageMajorThreshold = new AtomicDouble(initialMinorValue + 0.1d);
+		fifteenMinuteAverageMinorThreshold = new AtomicDouble(initialMinorValue);		
+	}
+	
 	@PostConstruct
 	public void postConstruct() {
 		oneMinuteAverageCriticalThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 3);
