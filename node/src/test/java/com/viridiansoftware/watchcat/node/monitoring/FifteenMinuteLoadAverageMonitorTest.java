@@ -190,7 +190,8 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		loadAverage.setFiveMinuteAverage(0.01);
 		loadAverage.setFifteenMinuteAverage(MAJOR_THRESHOLD);
 		
-		loadAverageMonitor.setFifteenMinuteAverageEvent(new LoadAverageEvent(alertSender, 1, Criticality.MINOR));
+		LoadAverageEvent loadAverageEvent = new LoadAverageEvent(alertSender, 1, Criticality.MINOR);
+		loadAverageMonitor.setFifteenMinuteAverageEvent(loadAverageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -207,7 +208,7 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		
 		Assert.assertEquals(true, loadAverageMonitor.getOneMinuteAverageEvent() == null);
 		Assert.assertEquals(true, loadAverageMonitor.getFiveMinuteAverageEvent() == null);
-		Assert.assertEquals(true, loadAverageMonitor.getFifteenMinuteAverageEvent() != null);			
+		Assert.assertEquals(loadAverageEvent, loadAverageMonitor.getFifteenMinuteAverageEvent());			
 	}
 	
 	@Test
@@ -216,7 +217,8 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		loadAverage.setFiveMinuteAverage(0.01);
 		loadAverage.setFifteenMinuteAverage(CRITICAL_THRESHOLD);
 		
-		loadAverageMonitor.setFifteenMinuteAverageEvent(new LoadAverageEvent(alertSender, 1, Criticality.MINOR));
+		LoadAverageEvent loadAverageEvent = new LoadAverageEvent(alertSender, 1, Criticality.MINOR);
+		loadAverageMonitor.setFifteenMinuteAverageEvent(loadAverageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -233,7 +235,7 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		
 		Assert.assertEquals(true, loadAverageMonitor.getOneMinuteAverageEvent() == null);
 		Assert.assertEquals(true, loadAverageMonitor.getFiveMinuteAverageEvent() == null);
-		Assert.assertEquals(true, loadAverageMonitor.getFifteenMinuteAverageEvent() != null);				
+		Assert.assertEquals(loadAverageEvent, loadAverageMonitor.getFifteenMinuteAverageEvent());				
 	}
 	
 	@Test
@@ -242,7 +244,8 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		loadAverage.setFiveMinuteAverage(0.01);
 		loadAverage.setFifteenMinuteAverage(MAJOR_THRESHOLD);
 		
-		loadAverageMonitor.setFifteenMinuteAverageEvent(new LoadAverageEvent(alertSender, 1, Criticality.CRITICAL));
+		LoadAverageEvent loadAverageEvent = new LoadAverageEvent(alertSender, 1, Criticality.CRITICAL);
+		loadAverageMonitor.setFifteenMinuteAverageEvent(loadAverageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -259,7 +262,7 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		
 		Assert.assertEquals(true, loadAverageMonitor.getOneMinuteAverageEvent() == null);
 		Assert.assertEquals(true, loadAverageMonitor.getFiveMinuteAverageEvent() == null);
-		Assert.assertEquals(true, loadAverageMonitor.getFifteenMinuteAverageEvent() != null);			
+		Assert.assertEquals(loadAverageEvent, loadAverageMonitor.getFifteenMinuteAverageEvent());			
 	}
 	
 	@Test
@@ -268,7 +271,8 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		loadAverage.setFiveMinuteAverage(0.01);
 		loadAverage.setFifteenMinuteAverage(MINOR_THRESHOLD);
 		
-		loadAverageMonitor.setFifteenMinuteAverageEvent(new LoadAverageEvent(alertSender, 1, Criticality.MAJOR));
+		LoadAverageEvent loadAverageEvent = new LoadAverageEvent(alertSender, 1, Criticality.MAJOR);
+		loadAverageMonitor.setFifteenMinuteAverageEvent(loadAverageEvent);
 		
 		mockery.checking(new Expectations() {
 			{
@@ -285,6 +289,6 @@ public class FifteenMinuteLoadAverageMonitorTest {
 		
 		Assert.assertEquals(true, loadAverageMonitor.getOneMinuteAverageEvent() == null);
 		Assert.assertEquals(true, loadAverageMonitor.getFiveMinuteAverageEvent() == null);
-		Assert.assertEquals(true, loadAverageMonitor.getFifteenMinuteAverageEvent() != null);			
+		Assert.assertEquals(loadAverageEvent, loadAverageMonitor.getFifteenMinuteAverageEvent());			
 	}
 }
