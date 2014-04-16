@@ -18,7 +18,7 @@ subprojects {
 	apply plugin: 'maven'
 
 	version = "1.0.0-SNAPSHOT"
-	group = "com.viridiansoftware.watchcat"
+	group = "io.watchcat"
 	
 	uploadArchives {
 		repositories {
@@ -62,11 +62,11 @@ project(":" + rootProject.name + "-node") {
 			"--name","watchcat-node",
 			"--description","watchcat node",
 			"--depends","oracle-java7-installer",
-			"--vendor","Viridian Software",
-			"--maintainer","Support Staff<support@viridiansoftware.com>",
+			"--vendor","watchcat.io",
+			"--maintainer","Thomas Cashman",
 			"--version",version,
-			"--url","watchcat.viridiansoftware.com",
-			"--prefix","usr/share/viridiansoftware/install/watchcat-node",
+			"--url","watchcat.io",
+			"--prefix","usr/share/watchcat/install/node",
 			"--inputs","fpm/config/package-inputs",
 			"--force",
 			"--before-install","fpm/scripts/before-install.sh",

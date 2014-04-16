@@ -1,29 +1,29 @@
 #!/bin/sh
-SCRIPT="java -jar /opt/custodian/collector/bin/custodian-collector.jar"
+SCRIPT="java -jar /opt/watchcat/bin/watchcat-node.jar"
 RUNAS=root
  
-PIDFILE=/var/run/custodian-collector.pid
-LOGFILE=/var/log/custodian/collector.log
+PIDFILE=/tmp/watchcat.pid
+LOGFILE=/var/log/watchcat/node.log
  
 start() {
   if [ -f /var/run/$PIDNAME ] && kill -0 $(cat /var/run/$PIDNAME); then
     echo 'Service already running' >&2
     return 1
   fi
-  echo 'Starting Custodian Metric Collector' >&2
+  echo 'Starting Watchcat Node' >&2
   local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
   su -c "$CMD" $RUNAS > "$PIDFILE"
-  echo 'Custodian Metric Collector started' >&2
+  echo 'Watchcat Node started' >&2
 }
  
 stop() {
   if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
-    echo 'Custodian Metric Collector not running' >&2
+    echo 'Watchcat Node not running' >&2
     return 1
   fi
-  echo 'Stopping Custodian Metric Collector' >&2
+  echo 'Watchcat Node Collector' >&2
   kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
-  echo 'Custodian Metric Collector stopped' >&2
+  echo 'Watchcat Node stopped' >&2
 }
  
 case "$1" in
