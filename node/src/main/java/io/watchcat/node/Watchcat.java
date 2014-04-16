@@ -43,7 +43,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
  * 
  * @author Thomas Cashman
  */
-@ComponentScan(basePackages={"com.viridiansoftware.watchcat"})
+@ComponentScan(basePackages={"io.watchcat"})
 @EnableAutoConfiguration
 @PropertySource({ "file:/etc/watchcat/node.properties", "file:/etc/watchcat/smtp.properties" })
 public class Watchcat {
