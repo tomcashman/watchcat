@@ -68,20 +68,21 @@ public class LoadAverageThresholds {
 	
 	@PostConstruct
 	public void postConstruct() {
-		oneMinuteAverageCriticalThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 3);
-		oneMinuteAverageMajorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 2);
-		oneMinuteAverageMinorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 1);
+		int numberOfCores = loadAverage.getNumberOfCpuCores();
+		oneMinuteAverageCriticalThreshold = new AtomicDouble(numberOfCores + 3);
+		oneMinuteAverageMajorThreshold = new AtomicDouble(numberOfCores + 2);
+		oneMinuteAverageMinorThreshold = new AtomicDouble(numberOfCores + 1);
 		
-		fiveMinuteAverageCriticalThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 2);
-		fiveMinuteAverageMajorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 1);
-		fiveMinuteAverageMinorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores());
+		fiveMinuteAverageCriticalThreshold = new AtomicDouble(numberOfCores + 2);
+		fiveMinuteAverageMajorThreshold = new AtomicDouble(numberOfCores + 1);
+		fiveMinuteAverageMinorThreshold = new AtomicDouble(numberOfCores);
 		
-		fifteenMinuteAverageCriticalThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() + 0.25);
-		fifteenMinuteAverageMajorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores());
-		fifteenMinuteAverageMinorThreshold = new AtomicDouble(loadAverage.getNumberOfCpuCores() - 0.25);
+		fifteenMinuteAverageCriticalThreshold = new AtomicDouble(numberOfCores + 0.25);
+		fifteenMinuteAverageMajorThreshold = new AtomicDouble(numberOfCores);
+		fifteenMinuteAverageMinorThreshold = new AtomicDouble(numberOfCores - 0.25);
 	}
 	
-	public void fromJson(GetResponse response) {
+	public void fromGetResponse(GetResponse response) {
 		Map<String, Object> values = response.getSourceAsMap();
 		
 		oneMinuteAverageMinorThreshold.set(Double.parseDouble(values.get("oneMinuteAverageMinorThreshold").toString()));
@@ -199,5 +200,9 @@ public class LoadAverageThresholds {
 	public void setFifteenMinuteAverageCriticalThreshold(
 			double fifteenMinuteAverageCriticalThreshold) {
 		this.fifteenMinuteAverageCriticalThreshold.set(fifteenMinuteAverageCriticalThreshold);
+	}
+
+	public void setLoadAverage(LoadAverage loadAverage) {
+		this.loadAverage = loadAverage;
 	}
 }

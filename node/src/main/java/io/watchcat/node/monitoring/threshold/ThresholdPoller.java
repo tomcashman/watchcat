@@ -80,7 +80,7 @@ public class ThresholdPoller implements Runnable {
 				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
 						ElasticSearchConstants.LOAD_AVERAGE).execute()
 				.actionGet();
-		loadAverageThresholds.fromJson(getResponse);
+		loadAverageThresholds.fromGetResponse(getResponse);
 	}
 	
 	private void pollMemoryUsageThresholds() {
