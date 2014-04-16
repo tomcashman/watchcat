@@ -25,11 +25,11 @@ package io.watchcat.node.monitoring;
 
 import io.watchcat.node.alerts.AlertSender;
 import io.watchcat.node.event.Criticality;
-import io.watchcat.node.event.memoryusage.RAMUsageEvent;
-import io.watchcat.node.event.memoryusage.SwapUsageEvent;
+import io.watchcat.node.event.RAMUsageEvent;
+import io.watchcat.node.event.SwapUsageEvent;
 import io.watchcat.node.metrics.MemoryUsage;
-import io.watchcat.node.metrics.reporting.LinuxMetricsCollector;
 import io.watchcat.node.monitoring.threshold.MemoryUsageThresholds;
+import io.watchcat.node.reporting.LinuxMetricsCollector;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

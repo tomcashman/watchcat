@@ -40,14 +40,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DiskThresholds {
+	public static final int DEFAULT_MINOR_THRESHOLD = 80;
+	public static final int DEFAULT_MAJOR_THRESHOLD = 90;
+	public static final int DEFAULT_CRITICAL_THRESHOLD = 95;
+	
 	private AtomicInteger minorThreshold;
 	private AtomicInteger majorThreshold;
 	private AtomicInteger criticalThreshold;
 	
 	public DiskThresholds() {
-		minorThreshold = new AtomicInteger(80);
-		majorThreshold = new AtomicInteger(90);
-		criticalThreshold = new AtomicInteger(95);
+		minorThreshold = new AtomicInteger(DEFAULT_MINOR_THRESHOLD);
+		majorThreshold = new AtomicInteger(DEFAULT_MAJOR_THRESHOLD);
+		criticalThreshold = new AtomicInteger(DEFAULT_CRITICAL_THRESHOLD);
 	}
 	
 	public XContentBuilder toJson() {
@@ -65,7 +69,7 @@ public class DiskThresholds {
 		return null;
 	}
 	
-	public void fromJson(GetResponse response) {
+	public void fromGetResponse(GetResponse response) {
 		Map<String, Object> values = response.getSourceAsMap();
 		
 		minorThreshold.set(Integer.parseInt(values.get("minorThreshold").toString()));

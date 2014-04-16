@@ -96,6 +96,6 @@ public class ThresholdPoller implements Runnable {
 				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
 						ElasticSearchConstants.DISKS).execute()
 				.actionGet();
-		diskUsageThresholds.fromJson(getResponse);
+		diskUsageThresholds.fromGetResponse(getResponse);
 	}
 }

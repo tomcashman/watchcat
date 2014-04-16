@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.watchcat.node.metrics.reporting;
+package io.watchcat.node.reporting;
 
 import io.watchcat.node.metrics.Bandwidth;
 import io.watchcat.node.metrics.DiskUsage;

@@ -26,12 +26,12 @@ package io.watchcat.node.monitoring;
 import io.watchcat.node.alerts.AlertSender;
 import io.watchcat.node.event.Criticality;
 import io.watchcat.node.event.CriticalityEvent;
-import io.watchcat.node.event.diskusage.DiskUsageEvent;
+import io.watchcat.node.event.DiskUsageEvent;
 import io.watchcat.node.metrics.DiskUsage;
 import io.watchcat.node.metrics.domain.Disk;
-import io.watchcat.node.metrics.reporting.LinuxMetricsCollector;
 import io.watchcat.node.monitoring.DiskMonitor;
 import io.watchcat.node.monitoring.threshold.DiskThresholds;
+import io.watchcat.node.reporting.LinuxMetricsCollector;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;

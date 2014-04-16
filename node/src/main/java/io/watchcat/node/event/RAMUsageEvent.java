@@ -21,32 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.watchcat.node.event.diskusage;
+package io.watchcat.node.event;
 
 import io.watchcat.node.alerts.AlertSender;
-import io.watchcat.node.event.Criticality;
-import io.watchcat.node.event.CriticalityEvent;
-import io.watchcat.node.metrics.DiskUsage;
-import io.watchcat.node.metrics.domain.Disk;
+
 
 /**
- * Stores the event status for the {@link DiskUsage} of a specific
- * {@link Disk} and sends associated alerts
+ *
  *
  * @author Thomas Cashman
  */
-public class DiskUsageEvent implements CriticalityEvent {
-	private String disk;
-	private Criticality criticality;
-	private String percentageUsed;
+public class RAMUsageEvent implements CriticalityEvent {
 	private AlertSender alertSender;
-
-	public DiskUsageEvent(AlertSender alertSender, String disk) {
-		this(alertSender, disk, null);
+	private Criticality criticality;
+	private String ramUsed;
+	
+	public RAMUsageEvent(AlertSender alertSender) {
+		this.alertSender = alertSender;
 	}
 	
-	public DiskUsageEvent(AlertSender alertSender, String disk, Criticality criticality) {
-		this.disk = disk;
+	public RAMUsageEvent(AlertSender alertSender, Criticality criticality) {
 		this.alertSender = alertSender;
 		this.criticality = criticality;
 	}
@@ -54,7 +48,7 @@ public class DiskUsageEvent implements CriticalityEvent {
 	@Override
 	public void begin(Criticality criticality, String... eventParams) {
 		this.criticality = criticality;
-		this.percentageUsed = eventParams[0];
+		this.ramUsed = eventParams[0];
 		alert();
 	}
 
@@ -66,9 +60,9 @@ public class DiskUsageEvent implements CriticalityEvent {
 
 	@Override
 	public void updateStatus(Criticality criticality, String... eventParams) {
-		if (this.criticality != criticality) {
+		if(this.criticality != criticality) {
 			this.criticality = criticality;
-			this.percentageUsed = eventParams[0];
+			this.ramUsed = eventParams[0];
 			alert();
 		}
 	}
@@ -78,11 +72,10 @@ public class DiskUsageEvent implements CriticalityEvent {
 		String alertMessage;
 		switch (criticality) {
 		case CLEAR:
-			alertMessage = "Disk '" + disk
-					+ "' usage has returned to normal";
+			alertMessage = "RAM usage has returned to normal";
 			break;
 		default:
-			alertMessage = "Disk '" + disk + "' is now at " + percentageUsed + "% used";
+			alertMessage = "RAM usage has reached " + ramUsed + "% used";
 			break;
 		}
 		alertSender.sendAlert(criticality, alertMessage);

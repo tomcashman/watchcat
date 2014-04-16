@@ -21,35 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package io.watchcat.node.event.memoryusage;
+package io.watchcat.node.event;
 
 import io.watchcat.node.alerts.AlertSender;
-import io.watchcat.node.event.Criticality;
-import io.watchcat.node.event.CriticalityEvent;
+import io.watchcat.node.metrics.LoadAverage;
 
 /**
- *
+ * Stores the event status related to {@link LoadAverage} and sends associated
+ * alerts
  *
  * @author Thomas Cashman
  */
-public class SwapUsageEvent implements CriticalityEvent {
-	private AlertSender alertSender;
+public class LoadAverageEvent implements CriticalityEvent {
+	private int minutePeriod;
 	private Criticality criticality;
-	private String swapUsed;
-	
-	public SwapUsageEvent(AlertSender alertSender) {
+	private String loadAverage;
+	private AlertSender alertSender;
+
+	public LoadAverageEvent(AlertSender alertSender, int minutePeriod) {
 		this.alertSender = alertSender;
+		this.minutePeriod = minutePeriod;
 	}
 	
-	public SwapUsageEvent(AlertSender alertSender, Criticality criticality) {
+	public LoadAverageEvent(AlertSender alertSender, int minutePeriod, Criticality criticality) {
 		this.alertSender = alertSender;
+		this.minutePeriod = minutePeriod;
 		this.criticality = criticality;
 	}
 
 	@Override
 	public void begin(Criticality criticality, String... eventParams) {
 		this.criticality = criticality;
-		this.swapUsed = eventParams[0];
+		this.loadAverage = eventParams[0];
 		alert();
 	}
 
@@ -61,9 +64,9 @@ public class SwapUsageEvent implements CriticalityEvent {
 
 	@Override
 	public void updateStatus(Criticality criticality, String... eventParams) {
-		if(this.criticality != criticality) {
+		if (this.criticality != criticality) {
 			this.criticality = criticality;
-			this.swapUsed = eventParams[0];
+			this.loadAverage = eventParams[0];
 			alert();
 		}
 	}
@@ -73,10 +76,10 @@ public class SwapUsageEvent implements CriticalityEvent {
 		String alertMessage;
 		switch (criticality) {
 		case CLEAR:
-			alertMessage = "Swap usage has returned to normal";
+			alertMessage = "Load average has returned to normal";
 			break;
 		default:
-			alertMessage = "Swap usage has reached " + swapUsed + "% used";
+			alertMessage = minutePeriod + " minute load average is at a value of " + loadAverage;
 			break;
 		}
 		alertSender.sendAlert(criticality, alertMessage);
