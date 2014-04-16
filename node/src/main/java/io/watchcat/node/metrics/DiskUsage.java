@@ -73,7 +73,7 @@ public class DiskUsage implements Runnable {
 			XContentBuilder builder = XContentFactory.jsonBuilder();
 			builder = builder.startObject();
 			builder = builder.field("timestamp", timestamp);
-			builder = builder.startArray("filesystems");
+			builder = builder.startArray("disks");
 			
 			Iterator<Disk> iterator = disks.get().iterator();
 			while(iterator.hasNext()) {
