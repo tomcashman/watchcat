@@ -88,7 +88,7 @@ public class ThresholdPoller implements Runnable {
 				.prepareGet(hostname, ElasticSearchConstants.THRESHOLD_TYPE,
 						ElasticSearchConstants.MEMORY_USAGE).execute()
 				.actionGet();
-		memoryUsageThresholds.fromJson(getResponse);
+		memoryUsageThresholds.fromGetResponse(getResponse);
 	}
 	
 	private void pollDiskUsageThresholds() {

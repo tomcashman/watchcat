@@ -40,20 +40,24 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MemoryUsageThresholds {
+	public static final int DEFAULT_MINOR_THRESHOLD = 80;
+	public static final int DEFAULT_MAJOR_THRESHOLD = 90;
+	public static final int DEFAULT_CRITICAL_THRESHOLD = 95;
+	
 	private AtomicInteger usedMemoryMinorThreshold, usedMemoryMajorThreshold, usedMemoryCriticalThreshold;
 	private AtomicInteger usedSwapMinorThreshold, usedSwapMajorThreshold, usedSwapCriticalThreshold;
 	
 	public MemoryUsageThresholds() {
-		usedMemoryMinorThreshold = new AtomicInteger(80);
-		usedMemoryMajorThreshold = new AtomicInteger(90);
-		usedMemoryCriticalThreshold = new AtomicInteger(95);
+		usedMemoryMinorThreshold = new AtomicInteger(DEFAULT_MINOR_THRESHOLD);
+		usedMemoryMajorThreshold = new AtomicInteger(DEFAULT_MAJOR_THRESHOLD);
+		usedMemoryCriticalThreshold = new AtomicInteger(DEFAULT_CRITICAL_THRESHOLD);
 		
-		usedSwapMinorThreshold = new AtomicInteger(80);
-		usedSwapMajorThreshold = new AtomicInteger(90);
-		usedSwapCriticalThreshold = new AtomicInteger(95);
+		usedSwapMinorThreshold = new AtomicInteger(DEFAULT_MINOR_THRESHOLD);
+		usedSwapMajorThreshold = new AtomicInteger(DEFAULT_MAJOR_THRESHOLD);
+		usedSwapCriticalThreshold = new AtomicInteger(DEFAULT_CRITICAL_THRESHOLD);
 	}
 	
-	public void fromJson(GetResponse response) {
+	public void fromGetResponse(GetResponse response) {
 		Map<String, Object> values = response.getSourceAsMap();
 		
 		usedMemoryMinorThreshold.set(Integer.parseInt(values.get("usedMemoryMinorThreshold").toString()));
