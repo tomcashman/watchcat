@@ -32,16 +32,25 @@ angular.module('watchcatApp').controller('DashboardCtrl', function($scope, $rout
 			xaxis: { 
 				mode: "time",
 				tickSize: [20, "second"],
+				color: "rgba(235,235,235,0.1)",
+				tickColor: "rgba(235,235,235,0.1)"
 			},
 			yaxis: {
-				min: 0
+				min: 0,
+				color: "rgba(235,235,235,0.1)"
 			},
 			selection: {
 				mode: "x"
 			},
+			grid: {
+				color: "#EBEBEB",
+				borderColor: "#EBEBEB"
+			},
 			legend: {
 				show: true,
-				noColumns: 5
+				noColumns: 5,
+				color: "#EBEBEB",
+				backgroundColor: "#4e5d6c"
 			}
 	};
 	
