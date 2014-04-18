@@ -304,9 +304,4 @@ angular.module('watchcatApp').controller('DashboardCtrl', function($scope, $rout
 			$scope.poll();
 		}
 	});
-	
-	$window.addEventListener('focus', function() {
-		$route.reload();
-	});
-	$window.addEventListener('blur', $scope.cancelPolling());
 });
