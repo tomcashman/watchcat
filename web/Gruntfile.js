@@ -95,7 +95,8 @@ module.exports = function (grunt) {
     jshint: {
       options: {
         jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
+        reporter: require('jshint-stylish'),
+        force: true
       },
       all: [
         'Gruntfile.js',
@@ -211,7 +212,8 @@ module.exports = function (grunt) {
           collapseWhitespace: true,
           collapseBooleanAttributes: true,
           removeCommentsFromCDATA: true,
-          removeOptionalTags: true
+          removeOptionalTags: false,
+          removeEmptyElements: false
         },
         files: [{
           expand: true,
@@ -254,6 +256,7 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '.htaccess',
             '*.html',
+            'configuration.js',
             'views/{,*/}*.html',
             'bower_components/**/*',
             'images/{,*/}*.{webp}',
@@ -264,6 +267,11 @@ module.exports = function (grunt) {
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/images',
           src: ['generated/*']
+        }, {
+        	expand: true, 
+        	cwd: '<%= yeoman.app %>/bower_components/font-awesome/fonts/', 
+        	src: ['**'], 
+        	dest: '<%= yeoman.dist %>/fonts/'
         }]
       },
       styles: {
@@ -366,8 +374,7 @@ module.exports = function (grunt) {
     'cssmin',
     'uglify',
     'rev',
-    'usemin',
-    'htmlmin'
+    'usemin'
   ]);
 
   grunt.registerTask('default', [

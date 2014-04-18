@@ -1,10 +1,10 @@
 #!/bin/bash
 ##################################################
 
-echo "Configuring custodian-web"
-cp -r /usr/share/viridiansoftware/install/custodian/dist/* /var/www/custodian/
+echo "Configuring watchcat web frontend"
+cp -r /usr/share/watchcat/install/web/dist/* /var/www/watchcat/
 
 echo "Cleaning up after install"
-rm -rf /usr/share/viridiansoftware/install
+rm -rf /usr/share/watchcat/install
 
 echo "Done"

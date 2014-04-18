@@ -35,6 +35,13 @@ subprojects {
 	}
 }
 
+	
+task bundleInstall(type: Exec) {
+	group = "Build"
+	description = "Installs ruby gems for fpm"
+	commandLine = ["bundle", "install"]
+}
+
 project(":" + rootProject.name + "-node") {
 	apply plugin: 'spring-boot'
 
@@ -74,9 +81,78 @@ project(":" + rootProject.name + "-node") {
 		]
 	}
 	
-	createDeb.dependsOn assemble
+	bundleInstall.dependsOn assemble
+	createDeb.dependsOn bundleInstall
 }
 
 project(":" + rootProject.name + "-web") {
+	task cleanBower(type: Delete) {
+		delete 'app/bower_components'
+	}
+	
+	task cleanDist(type: Delete) {
+		delete 'dist'
+	}
+	
+	task npm(type: Exec) {
+		group = "Build"
+		description = "Install all npm packages"
+		commandLine = ["npm", "install"]
+		inputs.file "package.json"
+		outputs.dir "node_modules"
+	}
+	
+	task bower(type: Exec) {
+		group = "Build"
+		description = "Install all bower packages"
+		commandLine = ["bower", "install"]
+		inputs.file "bower.json"
+		outputs.dir "app/bower_components"
+	}
+	
+	task grunt(type: Exec) {
+		group = "Build"
+		description = "Runs grunt"
+		commandLine = ["grunt"]
+		inputs.file "Gruntfile.js"
+		outputs.dir "dist"
+	}
+	
+	task webZip(type: Zip) {
+		from "dist"
+		archiveName project.name + '-' + version + '.zip'
+	}
 
+	task createDeb(type: Exec) {
+		group = "Build"
+		description = "Builds the debian package file"
+		commandLine = [
+			"fpm",
+			"-s","dir",
+			"-t","deb",
+			"--name","watchcat-web",
+			"--description","watchcat web frontend",
+			"--depends","apache2",
+			"--vendor","watchcat.io",
+			"--maintainer","Thomas Cashman",
+			"--version",version,
+			"--url","watchcat.io",
+			"--prefix","usr/share/watchcat/install/web",
+			"--inputs","fpm/config/package-inputs",
+			"--force",
+			"--before-install","fpm/scripts/before-install.sh",
+			"--after-install","fpm/scripts/after-install.sh"
+		]
+	}
+	
+	clean.dependsOn cleanBower
+	clean.dependsOn cleanDist
+	
+	bower.dependsOn npm
+	grunt.dependsOn bower
+	webZip.dependsOn grunt
+	build.dependsOn webZip
+	
+	bundleInstall.dependsOn webZip
+	createDeb.dependsOn bundleInstall
 }
