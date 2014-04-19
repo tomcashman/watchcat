@@ -78,17 +78,17 @@ angular.module('watchcatApp').factory('Metrics',
 						            },
 						            "aggregations" : {
 						            	"oneMinuteAverage" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "oneMinuteAverage"
 						            		}
 						            	},
 						            	"fiveMinuteAverage" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "fiveMinuteAverage"
 						            		}
 						            	},
 						            	"fifteenMinuteAverage" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "fifteenMinuteAverage"
 						            		}
 						            	},
@@ -127,22 +127,22 @@ angular.module('watchcatApp').factory('Metrics',
 						            },
 						            "aggregations" : {
 						            	"totalMemory" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "totalMemory"
 						            		}
 						            	},
 						            	"usedMemory" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "usedMemory"
 						            		}
 						            	},
 						            	"totalSwap" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "totalSwap"
 						            		}
 						            	},
 						            	"usedSwap" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "usedSwap"
 						            		}
 						            	}
@@ -152,15 +152,12 @@ angular.module('watchcatApp').factory('Metrics',
 						}
 					});
 				},
-				getDiskUsage : function(host, startTime, endTime) {
+				getDisks : function(host, startTime, endTime) {
 					return ElasticSearch.search({
 						index : host,
 						type : 'disks',
-						size : Math.round(((endTime - startTime)/ 1000) + 1),
+						size : 0,
 						body : {
-							sort : [ {
-								"timestamp" : "asc"
-							}, "_score" ],
 							query : {
 								"range" : {
 							        "timestamp" : {
@@ -169,7 +166,65 @@ angular.module('watchcatApp').factory('Metrics',
 							            "boost" : 2.0
 							        }
 							    }
+							},
+							aggregations : {
+								"disks" : {
+									"terms" : { "script" : "doc['disk'].value" }
+								}
 							}
+						}
+					});
+				},
+				getDiskUsage : function(host, startTime, endTime, disk) {
+					var ranges = calculateRanges(startTime, endTime);
+					return ElasticSearch.search({
+						index : host,
+						type : 'disks',
+						size : 0,
+						body : {
+							sort : [ {
+								"timestamp" : "asc"
+							}, "_score" ],
+							query : {
+								"filtered" : {
+									query: {
+										"range" : {
+									        "timestamp" : {
+									            "gte" : startTime,
+									            "lte" : endTime,
+									            "boost" : 2.0
+									        }
+									    }
+									},
+									filter: {
+										"query" : {
+											"match" : {
+												"disk" : disk
+											}
+										}
+									}
+								}
+							},
+							aggregations : {
+						        "timestamps" : {
+						            "range" : {
+						                "field" : "timestamp",
+						                "ranges" : ranges
+						            },
+						            "aggregations" : {
+						            	"size" : {
+						            		"max" : {
+						            			"field": "size"
+						            		}
+						            	},
+						            	"used" : {
+						            		"max" : {
+						            			"field": "used"
+						            		}
+						            	}
+						            }
+						        }
+						    }
 						}
 					});
 				},
@@ -197,12 +252,12 @@ angular.module('watchcatApp').factory('Metrics',
 						            },
 						            "aggregations" : {
 						            	"rx" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "rx"
 						            		}
 						            	},
 						            	"tx" : {
-						            		"avg" : {
+						            		"max" : {
 						            			"field": "tx"
 						            		}
 						            	}

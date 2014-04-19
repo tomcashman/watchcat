@@ -24,7 +24,10 @@
 package io.watchcat.node.reporting;
 
 import io.watchcat.node.ElasticSearchConstants;
+import io.watchcat.node.metrics.domain.Disk;
 
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -113,11 +116,15 @@ public class ElasticSearchReporter implements Runnable {
 					timestampStr).setSource(memoryUsage));
 		}
 
-		XContentBuilder diskUsage = metricsCollector.getDiskUsage().toJson(
-				timestamp);
-		if (diskUsage != null) {
-			bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.DISKS,
-					timestampStr).setSource(diskUsage));
+		Iterator<Disk> disks = metricsCollector.getDiskUsage().getDisks().iterator();
+		while(disks.hasNext()) {
+			Disk disk = disks.next();
+			XContentBuilder diskUsage = disk.toJson(
+					timestamp);
+			if (diskUsage != null) {
+				bulkRequestBuilder.add(transportClient.prepareIndex(hostname, ElasticSearchConstants.DISKS,
+						timestampStr + "-" + disk.getUrlFriendlyDisk()).setSource(diskUsage));
+			}
 		}
 
 		XContentBuilder bandwidth = metricsCollector.getBandwidth().toJson(
@@ -149,17 +156,35 @@ public class ElasticSearchReporter implements Runnable {
 
 	private void setupIndexes() throws Exception {
 		IndicesAdminClient indicesAdminClient = transportClient.admin().indices();
-		if (indicesAdminClient.exists(new IndicesExistsRequest(hostname))
+		if (!indicesAdminClient.exists(new IndicesExistsRequest(hostname))
 				.actionGet().isExists()) {
-			return;
-		}
-
-		if (!indicesAdminClient.prepareCreate(hostname).execute().actionGet()
-				.isAcknowledged()) {
-			// TODO: Throw exception
+			if (!indicesAdminClient.prepareCreate(hostname).execute().actionGet()
+					.isAcknowledged()) {
+				// TODO: Throw exception
+			}
 		}
 
 		setupNestedConnectionType(indicesAdminClient);
+		setupDiskIndex(indicesAdminClient);
+	}
+	
+	private void setupDiskIndex(IndicesAdminClient indicesAdminClient) throws IOException {
+		XContentBuilder diskMappingBuilder = XContentFactory.jsonBuilder();
+		diskMappingBuilder.startObject();
+		diskMappingBuilder.startObject(ElasticSearchConstants.DISKS);
+		diskMappingBuilder.startObject("properties");
+		diskMappingBuilder.startObject("disk");
+		diskMappingBuilder.field("type", "string");
+		diskMappingBuilder.field("index", "not_analyzed");
+		diskMappingBuilder.endObject();
+		diskMappingBuilder.endObject();
+		diskMappingBuilder.endObject();
+		diskMappingBuilder.endObject();
+		
+		if (!indicesAdminClient.preparePutMapping(hostname)
+				.setType(ElasticSearchConstants.DISKS).setSource(diskMappingBuilder).execute()
+				.actionGet().isAcknowledged()) {
+		}
 	}
 	
 	private void setupNestedConnectionType(IndicesAdminClient indicesAdminClient) throws Exception {
@@ -175,7 +200,7 @@ public class ElasticSearchReporter implements Runnable {
 		nestedConnectionTypeBuilder.endObject();
 
 		if (!indicesAdminClient.preparePutMapping(hostname)
-				.setType("connections").setSource(nestedConnectionTypeBuilder).execute()
+				.setType(ElasticSearchConstants.NETWORK_CONNECTIONS).setSource(nestedConnectionTypeBuilder).execute()
 				.actionGet().isAcknowledged()) {
 			// TODO: Throw exception
 		}

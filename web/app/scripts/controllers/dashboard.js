@@ -186,54 +186,48 @@ angular.module('watchcatApp').controller('DashboardCtrl', function($scope, $rout
 		});
 	};
 	
-	$scope.getDiskUsage = function(startTime, endTime, lastPollTime) {
-		Metrics.getDiskUsage($routeParams.host, startTime, endTime).then(function(response) {
-			for(var i = 0; i < response.hits.hits.length; i++) {
-				var timestamp = response.hits.hits[i]._source.timestamp;
-				for(var j = 0; j < response.hits.hits[i]._source.disks.length; j++) {
-					var filesystem = response.hits.hits[i]._source.disks[j].filesystem;
-					var mountPoint = response.hits.hits[i]._source.disks[j].mountPoint;
-					var diskIndex = -1;
-					
-					for(var k = 0; k < $scope.disks.length; k++) {
-						if($scope.disks[k].filesystem === filesystem) {
-
-							diskIndex = k;
-							break;
-						}
-					}
-					
-					if(diskIndex < 0) {
-						$scope.disks.push({
-							filesystem: filesystem,
-							mountPoint: mountPoint,
-							graph: [{
-								label: 'Total',
-								data: [[timestamp, response.hits.hits[i]._source.disks[j].size]]
-							}, {
-								label: 'Used',
-								data: [[timestamp, response.hits.hits[i]._source.disks[j].used]]
-							}]
-						});
-					} else {
-						if(startTime === lastPollTime) {
-							/* Push existing data to the left, dropping the item at index 0 */
-							for(var l = 1; l < $scope.disks[diskIndex].graph[0].data.length; l++) {
-								$scope.disks[diskIndex].graph[0].data[l - 1] = $scope.disks[diskIndex].graph[0].data[l];
-								$scope.disks[diskIndex].graph[1].data[l - 1] = $scope.disks[diskIndex].graph[1].data[l];
-							}
-							
-							/* Insert new data */
-							var index = $scope.disks[diskIndex].graph[0].data.length - 1;
-
-							$scope.disks[diskIndex].graph[0].data[index] = [timestamp, response.hits.hits[i]._source.disks[j].size];
-							$scope.disks[diskIndex].graph[1].data[index] = [timestamp, response.hits.hits[i]._source.disks[j].used];
-						} else {
-							$scope.disks[diskIndex].graph[0].data.push([timestamp, response.hits.hits[i]._source.disks[j].size]);
-							$scope.disks[diskIndex].graph[1].data.push([timestamp, response.hits.hits[i]._source.disks[j].used]);
-						}
+	$scope.getDisk = function(startTime, endTime, diskId) {
+		Metrics.getDiskUsage($routeParams.host, startTime, endTime, diskId).then(function(response) {
+			for(var i = 0; i < response.aggregations.timestamps.buckets.length; i++) {
+				var bucket = response.aggregations.timestamps.buckets[i];
+				var timestamp = bucket.from;
+				if(i == response.aggregations.timestamps.buckets.length - 1)
+					timestamp = bucket.to;
+				
+				var diskIndex = -1;
+				
+				for(var k = 0; k < $scope.disks.length; k++) {
+					if($scope.disks[k].disk === diskId) {
+						diskIndex = k;
+						break;
 					}
 				}
+				
+				if(diskIndex < 0) {
+					$scope.disks.push({
+						disk: diskId,
+						graph: [{
+							label: 'Used',
+							data: [[timestamp, bucket.used.value]]
+						},
+						{
+							label: 'Total',
+							data: [[timestamp, bucket.size.value]]
+						}]
+					});
+				} else {
+					$scope.disks[diskIndex].graph[0].data.push([timestamp, bucket.used.value]);
+					$scope.disks[diskIndex].graph[1].data.push([timestamp, bucket.size.value]);
+				}
+			}
+		});
+	};
+	
+	$scope.getDiskUsage = function(startTime, endTime, lastPollTime) {
+		Metrics.getDisks($routeParams.host, startTime, endTime).then(function(response) {
+			for(var i = 0; i < response.aggregations.disks.buckets.length; i++) {
+				var disk = response.aggregations.disks.buckets[i].key;
+				$scope.getDisk(startTime, endTime, disk);
 			}
 		});
 	};

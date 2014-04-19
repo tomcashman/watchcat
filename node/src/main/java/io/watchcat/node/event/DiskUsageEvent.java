@@ -76,8 +76,8 @@ public class DiskUsageEvent implements CriticalityEvent {
 		String alertMessage;
 		switch (criticality) {
 		case CLEAR:
-			alertMessage = "Disk '" + disk
-					+ "' usage has returned to normal";
+			alertMessage = "Disk usage on '" + disk
+					+ "' has returned to normal";
 			break;
 		default:
 			alertMessage = "Disk '" + disk + "' is now at " + percentageUsed + "% used";

@@ -23,6 +23,11 @@
  */
 package io.watchcat.node.metrics.domain;
 
+import java.util.Iterator;
+
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
+
 
 /**
  * A single disk outputted from df
@@ -45,6 +50,29 @@ public class Disk {
 		this.free = free;
 		this.percentageUsed = percentageUsed;
 		this.mountPoint = mountPoint;
+	}
+	
+	public XContentBuilder toJson(long timestamp) {
+		try {
+			XContentBuilder builder = XContentFactory.jsonBuilder();
+			builder = builder.startObject();
+			builder = builder.field("timestamp", timestamp);
+			builder = builder.field("disk", getDisk());
+			builder = builder.field("size", getSize());
+			builder = builder.field("used", getUsed());
+			builder = builder.field("free", getFree());
+			builder = builder.field("percentageUsed", getPercentageUsed());
+			builder = builder.field("mountPoint", getMountPoint());
+			builder = builder.endObject();
+			return builder;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String getUrlFriendlyDisk() {
+		return disk.replace('/', '_');
 	}
 
 	public String getDisk() {

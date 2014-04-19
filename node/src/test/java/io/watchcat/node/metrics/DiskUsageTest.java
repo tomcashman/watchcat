@@ -23,7 +23,10 @@
  */
 package io.watchcat.node.metrics;
 
+import io.watchcat.node.metrics.domain.Disk;
+
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.Assert;
@@ -51,25 +54,23 @@ public class DiskUsageTest {
 	}
 
 	@Test
-	public void testToJsonWithNoData() throws IOException {
-		long timestamp = System.currentTimeMillis();
-		XContentBuilder content = diskUsage.toJson(timestamp);
-		String json = content.string();
-		
-		Assert.assertEquals(true, json.contains("\"timestamp\":" + timestamp));
-		Assert.assertEquals(true, json.contains("\"disks\":[]"));
-	}
-
-	@Test
 	public void testToJsonWithData() throws IOException {
 		diskUsage.run();
 		
 		long timestamp = System.currentTimeMillis();
-		XContentBuilder content = diskUsage.toJson(timestamp);
-		String json = content.string();
-		
-		Assert.assertEquals(true, json.contains("\"timestamp\":" + timestamp));
-		Assert.assertEquals(true, json.contains("\"disks\":[{"));
-		Assert.assertEquals(true, json.endsWith("}]}"));
+		Iterator<Disk> disks = diskUsage.getDisks().iterator();
+		while(disks.hasNext()) {
+			Disk disk = disks.next();
+			XContentBuilder content = disk.toJson(timestamp);
+			String json = content.string();
+			
+			Assert.assertEquals(true, json.contains("\"timestamp\":" + timestamp));
+			Assert.assertEquals(true, json.contains("\"disk\":"));
+			Assert.assertEquals(true, json.contains("\"size\":"));
+			Assert.assertEquals(true, json.contains("\"used\":"));
+			Assert.assertEquals(true, json.contains("\"free\":"));
+			Assert.assertEquals(true, json.contains("\"percentageUsed\":"));
+			Assert.assertEquals(true, json.contains("\"mountPoint\":"));
+		}
 	}
 }

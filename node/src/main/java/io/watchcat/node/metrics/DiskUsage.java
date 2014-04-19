@@ -68,35 +68,6 @@ public class DiskUsage implements Runnable {
 		disks.set(result);
 	}
 
-	public XContentBuilder toJson(long timestamp) {
-		try {
-			XContentBuilder builder = XContentFactory.jsonBuilder();
-			builder = builder.startObject();
-			builder = builder.field("timestamp", timestamp);
-			builder = builder.startArray("disks");
-			
-			Iterator<Disk> iterator = disks.get().iterator();
-			while(iterator.hasNext()) {
-				Disk disk = iterator.next();
-				builder = builder.startObject();
-				builder = builder.field("filesystem", disk.getDisk());
-				builder = builder.field("size", disk.getSize());
-				builder = builder.field("used", disk.getUsed());
-				builder = builder.field("free", disk.getFree());
-				builder = builder.field("percentageUsed", disk.getPercentageUsed());
-				builder = builder.field("mountPoint", disk.getMountPoint());
-				builder = builder.endObject();
-			}
-			
-			builder = builder.endArray();
-			builder = builder.endObject();
-			return builder;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
