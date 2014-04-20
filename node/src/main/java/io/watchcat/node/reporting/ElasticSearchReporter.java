@@ -97,6 +97,9 @@ public class ElasticSearchReporter implements Runnable {
 
 	@Override
 	public void run() {
+		if(transportClient.connectedNodes().size() == 0)
+			return;
+		
 		BulkRequestBuilder bulkRequestBuilder = transportClient.prepareBulk();
 
 		long timestamp = System.currentTimeMillis();

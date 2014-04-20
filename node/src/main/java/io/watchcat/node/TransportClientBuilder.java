@@ -73,12 +73,6 @@ public class TransportClientBuilder {
 					.addTransportAddress(new InetSocketTransportAddress(
 							"localhost", 9300));
 		}
-		try {
-			Thread.sleep(1000);
-		} catch (Exception e) {}
-		if(transportClient.connectedNodes().size() == 0) {
-			throw new IOException("No nodes available");
-		}
 		return transportClient;
 	}
 }
