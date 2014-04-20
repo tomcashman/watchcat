@@ -47,6 +47,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EmailAddressPoller implements Runnable {
+	public static final long INTERVAL = 10L;
+	public static final long INITIAL_DELAY = 5L;
+	
 	@Autowired
 	private TransportClient transportClient;
 	@Autowired
@@ -63,7 +66,7 @@ public class EmailAddressPoller implements Runnable {
 	
 	@PostConstruct
 	public void postConstruct() {
-		scheduledExecutorService.scheduleAtFixedRate(this, 5, 10, TimeUnit.SECONDS);
+		scheduledExecutorService.scheduleAtFixedRate(this, INITIAL_DELAY, INTERVAL, TimeUnit.SECONDS);
 	}
 	
 	@Override
@@ -83,5 +86,18 @@ public class EmailAddressPoller implements Runnable {
 
 	public List<String> getEmailAddresses() {
 		return emailAddresses.get();
+	}
+
+	public void setTransportClient(TransportClient transportClient) {
+		this.transportClient = transportClient;
+	}
+
+	public void setScheduledExecutorService(
+			ScheduledExecutorService scheduledExecutorService) {
+		this.scheduledExecutorService = scheduledExecutorService;
+	}
+
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
 	}
 }

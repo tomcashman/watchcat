@@ -93,4 +93,40 @@ public class AlertSender {
 			}
 		}
 	}
+
+	public Properties getSmtpHostProperties() {
+		return smtpHostProperties;
+	}
+
+	public void setTransportClient(TransportClient transportClient) {
+		this.transportClient = transportClient;
+	}
+
+	public void setHostname(String hostname) {
+		this.hostname = hostname;
+	}
+
+	public void setEmailAddressPoller(EmailAddressPoller emailAddressPoller) {
+		this.emailAddressPoller = emailAddressPoller;
+	}
+
+	public void setSmtpHost(String smtpHost) {
+		this.smtpHost = smtpHost;
+	}
+
+	public void setSmtpPort(String smtpPort) {
+		this.smtpPort = smtpPort;
+	}
+
+	public void setSmtpTls(String smtpTls) {
+		this.smtpTls = smtpTls;
+	}
+
+	public void setSmtpUsername(String smtpUsername) {
+		this.smtpUsername = smtpUsername;
+	}
+
+	public void setSmtpPassword(String smtpPassword) {
+		this.smtpPassword = smtpPassword;
+	}
 }
