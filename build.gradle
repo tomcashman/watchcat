@@ -17,7 +17,7 @@ subprojects {
 	apply plugin: 'eclipse-wtp'
 	apply plugin: 'maven'
 
-	version = "1.0.0"
+	version = "1.0.1-SNAPSHOT"
 	group = "io.watchcat"
 	
 	uploadArchives {
