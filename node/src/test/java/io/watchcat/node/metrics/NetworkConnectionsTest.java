@@ -26,6 +26,7 @@ package io.watchcat.node.metrics;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.After;
@@ -93,7 +94,7 @@ public class NetworkConnectionsTest implements Runnable {
 	}
 	
 	private void createClientServer() throws IOException {
-		int port = 10001;
+		int port = new Random().nextInt(1000) + 9000;
 		server = new ServerSocket(port);
 		serverThread.start();
 		client = new Socket("localhost", port);
