@@ -66,6 +66,7 @@ angular.module('watchcatApp').controller(
 				$scope.isRefreshing = true;
 				if($scope.isAlertsPage) {
 					$route.reload();
+					$scope.isRefreshing = false;
 				} else {
 					$scope.timePeriodClicked($scope.selectedTimePeriod);
 					$timeout(function() {
