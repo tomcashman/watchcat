@@ -25,7 +25,7 @@
 
 angular.module('watchcatApp').controller(
 		'HeaderCtrl',
-		function($rootScope, $scope, $routeParams, $modal, $location, $timeout, Hosts) {
+		function($rootScope, $scope, $route, $routeParams, $modal, $location, $timeout, Hosts) {
 			$scope.isAlertsPage = $location.path().indexOf('alerts') != -1;
 			
 			$rootScope.$on('$locationChangeSuccess', function () {
@@ -62,12 +62,16 @@ angular.module('watchcatApp').controller(
 			});
 			
 			$scope.isRefreshing = false;
-			$scope.refreshGraphs = function() {
+			$scope.refresh = function() {
 				$scope.isRefreshing = true;
-				$scope.timePeriodClicked($scope.selectedTimePeriod);
-				$timeout(function() {
-					$scope.isRefreshing = false;
-				}, 2000);
+				if($scope.isAlertsPage) {
+					$route.reload();
+				} else {
+					$scope.timePeriodClicked($scope.selectedTimePeriod);
+					$timeout(function() {
+						$scope.isRefreshing = false;
+					}, 2000);
+				}
 			};
 
 			$scope.timePeriodClicked = function(timePeriod) {
