@@ -27,10 +27,11 @@ import io.watchcat.node.util.ShellCommand;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.elasticsearch.common.util.concurrent.jsr166e.extra.AtomicDouble;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.stereotype.Component;
+
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * Gathers the load average and number of CPU cores of the system

@@ -8,33 +8,18 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.0.1.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.1.4.RELEASE")
     }
 }
 
-subprojects {
-	apply plugin: 'java'
-	apply plugin: 'eclipse-wtp'
-	apply plugin: 'maven'
+version = "2.0.0-SNAPSHOT"
+group = "io.watchcat"
 
-	version = "1.0.1-SNAPSHOT"
-	group = "io.watchcat"
-	
-	uploadArchives {
-		repositories {
-			mavenDeployer {
-				repository(url: "")
-			}
-		}
-	}
-	
-	repositories {
-		mavenLocal()
-		mavenCentral()
-		maven { url "http://repo.spring.io/libs-snapshot" }
-	}
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven { url "http://repo.spring.io/libs-snapshot" }
 }
-
 	
 task bundleInstall(type: Exec) {
 	group = "Build"
@@ -42,117 +27,48 @@ task bundleInstall(type: Exec) {
 	commandLine = ["bundle", "install"]
 }
 
-project(":" + rootProject.name + "-node") {
-	apply plugin: 'spring-boot'
+apply plugin: 'java'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'maven'
+apply plugin: 'spring-boot'
 
-	dependencies {
-		compile 'org.springframework.boot:spring-boot-starter:1.0.1.RELEASE'
-		compile 'org.elasticsearch:elasticsearch:1.1.0'
-		compile 'javax.mail:mail:1.4.7'
-		
-		testCompile 'junit:junit:4.11'
-        	testCompile 'org.jmock:jmock-legacy:2.6.0'
-        	testCompile 'org.jmock:jmock-junit4:2.6.0'
-	}
+dependencies {
+	compile 'org.springframework.boot:spring-boot-starter:1.1.4.RELEASE'
+	compile 'org.elasticsearch:elasticsearch:1.2.3'
+	compile 'com.codahale.metrics:metrics-core:3.0.1'
+	compile 'com.google.guava:guava:17.0'
+	compile 'javax.mail:mail:1.4.7'
 	
-	jar {
-    		baseName = 'watchcat-node'
-	}
-	
-	task createDeb(type: Exec) {
-		group = "Build"
-		description = "Builds the debian package file"
-		commandLine = [
-			"fpm",
-			"-s","dir",
-			"-t","deb",
-			"--name","watchcat-node",
-			"--description","watchcat node",
-			"--depends","oracle-java7-installer",
-			"--vendor","watchcat.io",
-			"--maintainer","Thomas Cashman",
-			"--version",version,
-			"--url","watchcat.io",
-			"--prefix","usr/share/watchcat/install/node",
-			"--inputs","fpm/config/package-inputs",
-			"--force",
-			"--before-install","fpm/scripts/before-install.sh",
-			"--after-install","fpm/scripts/after-install.sh"
-		]
-	}
-	
-	bundleInstall.dependsOn assemble
-	createDeb.dependsOn bundleInstall
+	testCompile 'junit:junit:4.11'
+    	testCompile 'org.jmock:jmock-legacy:2.6.0'
+    	testCompile 'org.jmock:jmock-junit4:2.6.0'
 }
 
-project(":" + rootProject.name + "-web") {
-	task cleanBower(type: Delete) {
-		delete 'app/bower_components'
-	}
-	
-	task cleanDist(type: Delete) {
-		delete 'dist'
-	}
-	
-	task npm(type: Exec) {
-		group = "Build"
-		description = "Install all npm packages"
-		commandLine = ["npm", "install"]
-		inputs.file "package.json"
-		outputs.dir "node_modules"
-	}
-	
-	task bower(type: Exec) {
-		group = "Build"
-		description = "Install all bower packages"
-		commandLine = ["bower", "install"]
-		inputs.file "bower.json"
-		outputs.dir "app/bower_components"
-	}
-	
-	task grunt(type: Exec) {
-		group = "Build"
-		description = "Runs grunt"
-		commandLine = ["grunt"]
-		inputs.file "Gruntfile.js"
-		outputs.dir "dist"
-	}
-	
-	task webZip(type: Zip) {
-		from "dist"
-		archiveName project.name + '-' + version + '.zip'
-	}
-
-	task createDeb(type: Exec) {
-		group = "Build"
-		description = "Builds the debian package file"
-		commandLine = [
-			"fpm",
-			"-s","dir",
-			"-t","deb",
-			"--name","watchcat-web",
-			"--description","watchcat web frontend",
-			"--depends","apache2",
-			"--vendor","watchcat.io",
-			"--maintainer","Thomas Cashman",
-			"--version",version,
-			"--url","watchcat.io",
-			"--prefix","usr/share/watchcat/install/web",
-			"--inputs","fpm/config/package-inputs",
-			"--force",
-			"--before-install","fpm/scripts/before-install.sh",
-			"--after-install","fpm/scripts/after-install.sh"
-		]
-	}
-	
-	clean.dependsOn cleanBower
-	clean.dependsOn cleanDist
-	
-	bower.dependsOn npm
-	grunt.dependsOn bower
-	webZip.dependsOn grunt
-	build.dependsOn webZip
-	
-	bundleInstall.dependsOn webZip
-	createDeb.dependsOn bundleInstall
+jar {
+		baseName = 'watchcat'
 }
+
+task createDeb(type: Exec) {
+	group = "Build"
+	description = "Builds the debian package file"
+	commandLine = [
+		"fpm",
+		"-s","dir",
+		"-t","deb",
+		"--name","watchcat",
+		"--description","Watchcat linux metrics reporter",
+		"--depends","oracle-java7-installer",
+		"--vendor","watchcat.io",
+		"--maintainer","Thomas Cashman",
+		"--version",version,
+		"--url","watchcat.io",
+		"--prefix","usr/share/watchcat/install/node",
+		"--inputs","fpm/config/package-inputs",
+		"--force",
+		"--before-install","fpm/scripts/before-install.sh",
+		"--after-install","fpm/scripts/after-install.sh"
+	]
+}
+
+bundleInstall.dependsOn assemble
+createDeb.dependsOn bundleInstall

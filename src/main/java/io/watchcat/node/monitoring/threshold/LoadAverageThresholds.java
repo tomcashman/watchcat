@@ -30,11 +30,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.common.util.concurrent.jsr166e.extra.AtomicDouble;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * Stores alert thresholds for {@link LoadAverage}
